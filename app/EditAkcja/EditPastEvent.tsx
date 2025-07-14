@@ -96,6 +96,7 @@ export default function EditPastAkcjaPage() {
     }
   };
 
+  //Wczytywanie danych
   useEffect(() => {
     const fetchAkcjaData = async () => {
       try {
@@ -171,8 +172,9 @@ export default function EditPastAkcjaPage() {
             stopTimeReal={stopTimeReal}
             onStartRealChange={setTimeStartReal}
             onStopRealChange={setTimeStopReal}
+            status_akcji={action_data?.status}
           />
-
+          {action_data?.status === "Odbyta" && (
           <div className="flex items-center gap-3 pt-2">
             <input
               id="active"
@@ -185,6 +187,8 @@ export default function EditPastAkcjaPage() {
               Szkolenie
             </Label>
           </div>
+          )}
+
 
           {/* Action Buttons */}
           <div className="pt-4 flex flex-col sm:flex-row gap-3">
@@ -203,7 +207,6 @@ export default function EditPastAkcjaPage() {
             >
               Delete Event
             </Button>
-
           </div>
         </form>
       </div>
