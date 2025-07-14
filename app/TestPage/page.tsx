@@ -8,7 +8,7 @@ export default function TestPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
       <div className="flex flex-col sm:flex-row gap-4">
-        <Link href="/first-action">
+        <Link href="/BMDashboard">
           <Button className="w-40 text-base">BM DASHBOARD</Button>
         </Link>
         <Link href="/SVDashBoard">

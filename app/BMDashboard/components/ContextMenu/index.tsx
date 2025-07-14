@@ -7,6 +7,20 @@ type ContextMenuProps = {
 
 export default function ContextMenu({ closeMenu }: ContextMenuProps) {
   const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:8081/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include', // this is CRITICAL for cookies
+      });
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+
+    router.push('Login');
+  };
+
   return (
     <div className="mt-2 w-44 bg-white rounded-lg shadow-2xl ring-1 ring-black ring-opacity-10 relative">
       {/* Arrow */}
@@ -15,7 +29,7 @@ export default function ContextMenu({ closeMenu }: ContextMenuProps) {
       <button
         className="block w-full text-left px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600 hover:text-white transition-colors rounded-t-lg"
         onClick={() => {
-          router.push("/EditNewEvent");
+          router.push("/NewEvent");
           closeMenu();
         }}
       >
@@ -24,7 +38,7 @@ export default function ContextMenu({ closeMenu }: ContextMenuProps) {
       <button
         className="block w-full text-left px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600 hover:text-white transition-colors"
         onClick={() => {
-          alert("Option 2 selected");
+          handleLogout();
           closeMenu();
         }}
       >

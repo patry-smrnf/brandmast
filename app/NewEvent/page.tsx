@@ -1,12 +1,12 @@
 "use client";
-import AuthGuard from "../AuthGuard";
-import BMDashboardPanel from "./BmDashboard";
 
-export default function BMDashboard() {
+import AuthGuard from "../AuthGuard";
+import NewEventPage from "./NewEvent";
+
+export default function NewEvent() {
   return (
   <AuthGuard allowedRoles={["BM"]}>
-    <BMDashboardPanel/>
+    <NewEventPage/>
   </AuthGuard>  
   );
-  
 }

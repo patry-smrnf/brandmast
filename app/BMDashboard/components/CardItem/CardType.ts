@@ -1,6 +1,6 @@
 export interface CardType {
   date: string;
-  tag?: string;
+  tag: string;
   status: string,
   tagColor?: string;
   updated: string;
