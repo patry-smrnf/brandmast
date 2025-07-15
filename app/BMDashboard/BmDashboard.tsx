@@ -31,7 +31,6 @@ export default function BMDashboardPanel() {
 
       const data: CardType[] = await response.json();
 
-      // 🛠️ Map tagColor based on tag
       const updatedCards = data.map((card) => ({
         ...card,
         tagColor: tagColorMap[card.tag] || "bg-gray-500", // fallback color

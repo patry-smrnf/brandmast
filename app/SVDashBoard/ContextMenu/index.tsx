@@ -6,6 +6,7 @@ import {
   PlusCircle,
   LayoutDashboard,
   FlaskConical,
+  Users
 } from "lucide-react"; // optional icons
 import clsx from "clsx";
 
@@ -15,17 +16,12 @@ type ContextMenuProps = {
 
 const menuItems = [
   {
-    label: "Dodaj Akcję",
-    icon: PlusCircle,
-    route: "/NewEvent",
-  },
-  {
-    label: "Statystyki",
-    icon: BarChart2,
+    label: "Zarzadzaj BM",
+    icon: Users,
     route: "/BMChartboard",
   },
   {
-    label: "Dashboard",
+    label: "Team Dashboard",
     icon: LayoutDashboard,
     route: "/",
   },

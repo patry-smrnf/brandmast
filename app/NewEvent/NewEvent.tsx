@@ -70,7 +70,7 @@ export default function NewEventPage() {
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 sm:p-6">
       <form onSubmit={handleSubmit} className="bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 sm:p-8 max-w-md w-full space-y-4 sm:space-y-6 shadow-xl border border-gray-700">
         <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-4 sm:mb-6">
-          Edit Event
+          Dodaj akcje
         </h1>
 
         <div>
