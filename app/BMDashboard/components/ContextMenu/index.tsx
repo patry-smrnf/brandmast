@@ -53,9 +53,6 @@ export default function ContextMenu({ closeMenu }: ContextMenuProps) {
 
   return (
     <div className="relative mt-2 w-52 bg-white rounded-xl shadow-2xl ring-1 ring-black/10 overflow-hidden">
-      {/* Arrow */}
-      <div className="absolute -top-2 right-6 w-4 h-4 bg-white rotate-45 shadow-sm z-10"></div>
-
       <div className="flex flex-col divide-y divide-gray-200">
         {menuItems.map(({ label, icon: Icon, route }, idx) => (
           <button
