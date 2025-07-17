@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Loader2 } from "lucide-react"; // optional icon for animation
+import { API_BASE_URL } from "./config"
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -17,7 +18,7 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
   useEffect(() => {
     async function verifyAuth() {
       try {
-        const { data } = await axios.get(`http://localhost:8081/api/auth/me`, {
+        const { data } = await axios.get(`${API_BASE_URL}/api/auth/me`, {
           withCredentials: true,
         });
 

@@ -12,6 +12,7 @@ import clsx from "clsx";
 type ContextMenuProps = {
   closeMenu: () => void;
 };
+import { API_BASE_URL } from "@/app/config";  
 
 const menuItems = [
   {
@@ -41,7 +42,7 @@ export default function ContextMenu({ closeMenu }: ContextMenuProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:8081/api/auth/logout", {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

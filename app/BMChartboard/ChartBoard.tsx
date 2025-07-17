@@ -21,6 +21,7 @@ import {
   Cell,
 } from 'recharts';
 import ContextMenu from "../BMDashboard/components/ContextMenu";
+import { API_BASE_URL } from '../config';
 
 interface ActionData {
   id_akcja: number;
@@ -84,7 +85,7 @@ const BMChartBoard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("http://localhost:8081/api/bm/actionsForChart", {
+        const res = await fetch(`${API_BASE_URL}/api/bm/actionsForChart`, {
             method: "GET",
             credentials: "include",
         });        

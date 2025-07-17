@@ -4,7 +4,7 @@ import CardItem from "./components/CardItem";
 import ContextMenu from "./components/ContextMenu";
 import { CardType } from "./components/CardItem/CardType";
 import Link from "next/link";
-
+import { API_BASE_URL } from "../config";
 
 export default function BMDashboardPanel() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,7 +23,7 @@ export default function BMDashboardPanel() {
   useEffect(() => {
   const fetchCards = async () => {
     try {
-      const response = await fetch("http://localhost:8081/api/bm/actions", {
+      const response = await fetch(`${API_BASE_URL}/api/bm/actions`, {
         method: "GET",
         credentials: "include",
       });

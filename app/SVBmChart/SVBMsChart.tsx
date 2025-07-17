@@ -26,6 +26,7 @@ import { Label } from "@/components/ui/label";
 import ContextMenu from "../SVDashBoard/ContextMenu";
 import { BMResData } from "../SVDashBoard/types/BMResponse";
 import { toast } from "sonner";
+import { API_BASE_URL } from "../config";
 
 
 
@@ -36,18 +37,7 @@ interface User {
 }
 
 export default function SVBmChartPage() {
-  const [users, setUsers] = useState<User[]>([
-    { id: 1, name: "Alice", email: "alice@example.com" },
-    { id: 2, name: "Bob", email: "bob@example.com" },
-    { id: 3, name: "Charlie", email: "charlie@example.com" },
-    { id: 4, name: "Diana", email: "diana@example.com" },
-    { id: 5, name: "Eve", email: "eve@example.com" },
-    { id: 6, name: "Frank", email: "frank@example.com" },
-    { id: 7, name: "Diana", email: "diana@example.com" },
-    { id: 8, name: "Eve", email: "eve@example.com" },
-    { id: 9, name: "Frank", email: "frank@example.com" },
-  ]);
-  const [newUser, setNewUser] = useState({ name: "", email: "" });
+  const [plhLogin, setPLHLogin] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const [page, setPage] = useState(0);
   const menuRef = useRef(null);
@@ -57,7 +47,7 @@ export default function SVBmChartPage() {
   useEffect(() => {
     const fetchBMdata = async () => {
         try {
-            const response = await fetch("http://localhost:8081/api/sv/myBMs", {
+            const response = await fetch(`${API_BASE_URL}/api/sv/myBMs`, {
                 method: "GET",
                 credentials: "include"
             });
@@ -79,13 +69,44 @@ export default function SVBmChartPage() {
   }, []);
 
   const handleDelete = (id: number) => {
-    setUsers(users.filter((user) => user.id !== id));
   };
 
-  const handleCreate = () => {
-    const id = Date.now();
-    setUsers([...users, { id, ...newUser }]);
-    setNewUser({ name: "", email: "" });
+  const handleCreate = async (e: React.FormEvent) =>  {
+    e.preventDefault();
+
+    
+    if (!plhLogin) {
+      toast.error("Please fill all fields.");
+      return;
+    }
+
+    const payload = {
+      login: plhLogin,
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/sv/createBM`, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      if(!response.ok) {
+        toast.error(result.message);
+        throw new Error(result.message);
+      }
+
+      toast.success(result.message || "BM created successfully!");
+      
+    }
+    catch(error) {
+      toast.error("error" + error);
+    }
+
   };
 
   const paginatedUsers = bmData.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
@@ -129,24 +150,16 @@ export default function SVBmChartPage() {
                 </DialogTrigger>
                 <DialogContent className="bg-gray-900 text-white border border-gray-700 max-w-md w-full rounded-xl backdrop-blur-xl">
                   <DialogHeader>
-                    <DialogTitle className="text-lg">Add a New User</DialogTitle>
+                    <DialogTitle className="text-lg">Dodaj nowego BM do swojego teamu</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="login">login PLH</Label>
                       <Input
-                        id="name"
-                        value={newUser.name}
-                        onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                        className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        value={newUser.email}
-                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                        id="login"
+                        placeholder="PLHXXXXX"
+                        value={plhLogin}
+                        onChange={(e) => setPLHLogin(e.target.value)}
                         className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"
                       />
                     </div>

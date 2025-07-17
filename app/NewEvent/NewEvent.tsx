@@ -10,6 +10,7 @@ import "leaflet/dist/leaflet.css";
 import DatePickerInput from "./components/DatePickerInput";
 import AddressInput from "./components/AddressInput";
 import TimeInputs from "./components/TimeInput";
+import { API_BASE_URL } from "../config";
 
 function normalizeTime(input: string): string {
   const parts = input.split(":");
@@ -47,7 +48,7 @@ export default function NewEventPage() {
     };
 
     try {
-      const response = await fetch("http://localhost:8081/api/bm/addAction", {
+      const response = await fetch(`${API_BASE_URL}/api/bm/addAction`, {
         credentials: "include",
         method: "POST",
         headers: {

@@ -6,6 +6,7 @@ import SVDashboard from "./SVDashBoard/page";
 import NotAuthorized from "./Not-Authorized/page";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "./config";
 
 type UserRole = "BM" | "SV" | null;
 
@@ -17,7 +18,7 @@ export default function ModernDarkPage() {
   useEffect(() => {
     async function verifyAuth() {
       try {
-        const { data } = await axios.get(`http://localhost:8081/api/auth/me`, {
+        const { data } = await axios.get(`${API_BASE_URL}/api/auth/me`, {
           withCredentials: true,
         });
 

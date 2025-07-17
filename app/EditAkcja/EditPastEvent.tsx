@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { useLocation } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 
 import DatePickerInput from "./components/DatePickerInput";
@@ -13,6 +12,7 @@ import AddressInput from "./components/AddressInput";
 import TimeInputs from "./components/TimeInput";
 import { akcja_data } from "./types/akcja";
 import { format, parse } from "date-fns";
+import { API_BASE_URL } from "../config";
 
 export default function EditPastAkcjaPage() {
   const [title, setTitle] = useState("");
@@ -47,7 +47,7 @@ export default function EditPastAkcjaPage() {
         szkolenie: isActive,
       };
 
-      const response = await fetch("http://localhost:8081/api/bm/editAction", {
+      const response = await fetch(`${API_BASE_URL}/api/bm/editAction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +75,7 @@ export default function EditPastAkcjaPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:8081/api/bm/delAction", {
+      const response = await fetch(`${API_BASE_URL}/api/bm/delAction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +100,7 @@ export default function EditPastAkcjaPage() {
   useEffect(() => {
     const fetchAkcjaData = async () => {
       try {
-        const response = await fetch("http://localhost:8081/api/bm/action?id=" + id, {
+        const response = await fetch(`${API_BASE_URL}/api/bm/action?id=${id}`, {
           method: "GET",
           credentials: "include",
         });

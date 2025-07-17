@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 import { BMResData } from "./types/BMResponse";
 import ContextMenu from "./ContextMenu";
+import { API_BASE_URL } from "../config";
 
 function calculateHours(start: string, stop: string): number {
   const [h1, m1] = start.split(":").map(Number);
@@ -30,7 +31,7 @@ export default function SVDashboard() {
     useEffect(() => {
         const fetchBMdata = async () => {
             try {
-                const response = await fetch("http://localhost:8081/api/sv/myBMs", {
+                const response = await fetch(`${API_BASE_URL}/api/sv/myBMs`, {
                     method: "GET",
                     credentials: "include"
                 });

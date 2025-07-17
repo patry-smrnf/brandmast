@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-
+import { API_BASE_URL } from "../config"
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function LoginPage() {
 
       try {
         const { data } = await axios.post(
-          `http://localhost:8081/api/auth/login`,
+          `${API_BASE_URL}/api/auth/login`,
           { login },
           {
             headers: { "Content-Type": "application/json" },
