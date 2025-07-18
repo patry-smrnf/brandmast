@@ -6,7 +6,8 @@ import {
   PlusCircle,
   LayoutDashboard,
   FlaskConical,
-  Users
+  Users,
+  Store
 } from "lucide-react"; // optional icons
 import clsx from "clsx";
 import { API_BASE_URL } from "@/app/config";
@@ -27,9 +28,9 @@ const menuItems = [
     route: "/",
   },
   {
-    label: "Test Menu",
-    icon: FlaskConical,
-    route: "/TestPage",
+    label: "Zarzdzaj sklepami",
+    icon: Store,
+    route: "/SVShopboard",
   },
 ];
 

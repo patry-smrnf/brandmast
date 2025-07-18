@@ -24,6 +24,8 @@ type AddressInputProps = {
 export default function AddressInput({ value, onChange }: AddressInputProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  
+
   const filteredSuggestions = addressSuggestions.filter((address) =>
     address.toLowerCase().includes(value.toLowerCase())
   );

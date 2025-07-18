@@ -6,6 +6,7 @@ import {
   PlusCircle,
   LayoutDashboard,
   FlaskConical,
+  BadgeQuestionMark 
 } from "lucide-react"; // optional icons
 import clsx from "clsx";
 
@@ -31,9 +32,9 @@ const menuItems = [
     route: "/",
   },
   {
-    label: "Test Menu",
-    icon: FlaskConical,
-    route: "/TestPage",
+    label: "Helper page",
+    icon: BadgeQuestionMark,
+    route: "/BMHelperPage"
   },
 ];
 

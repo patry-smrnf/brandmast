@@ -28,14 +28,6 @@ import { BMResData } from "../SVDashBoard/types/BMResponse";
 import { toast } from "sonner";
 import { API_BASE_URL } from "../config";
 
-
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
 export default function SVBmChartPage() {
   const [plhLogin, setPLHLogin] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(3);
@@ -68,7 +60,32 @@ export default function SVBmChartPage() {
     fetchBMdata();
   }, []);
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
+    const payload = {
+      id_bm: id,
+    };
+    try{
+      const response = await fetch(`${API_BASE_URL}/api/sv/deleteBM`, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      if(!response.ok) {
+        toast.error(result.message);
+        throw new Error(result.message);
+      }
+
+      toast.success(result.message || "BM created successfully!");
+    }
+    catch(error) {
+      toast.error("error" + error);
+    }
+
   };
 
   const handleCreate = async (e: React.FormEvent) =>  {
@@ -125,11 +142,11 @@ export default function SVBmChartPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl">
           <Card className="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-xl backdrop-blur-md">
             <CardHeader>
-              <CardTitle className="text-lg md:text-xl font-semibold text-white">User Statistics</CardTitle>
+              <CardTitle className="text-lg md:text-xl font-semibold text-white">Statystyki</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-gray-300 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Total Users:</span>
+                <span className="text-gray-400">Ilosc bm:</span>
                 <span className="text-white font-medium text-lg">{bmData.length}</span>
               </div>
               <div className="flex items-center justify-between">
@@ -141,11 +158,11 @@ export default function SVBmChartPage() {
 
           <Card className="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-xl backdrop-blur-md">
             <CardHeader className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <CardTitle className="text-lg md:text-xl font-semibold text-white">User Management</CardTitle>
+              <CardTitle className="text-lg md:text-xl font-semibold text-white">Zarzadzaj BM-ami</CardTitle>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="default" className="py-2.5 px-5 me-2 mb-2 text-small font-medium text-white focus:outline-none bg-blue-900 rounded-full border border-blue-600 hover:bg-blue-800 focus:z-10 focus:ring-4 focus:ring-gray-400 ">
-                    Create New User
+                    Dodaj nowego BM
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-gray-900 text-white border border-gray-700 max-w-md w-full rounded-xl backdrop-blur-xl">
@@ -167,7 +184,7 @@ export default function SVBmChartPage() {
                       onClick={handleCreate}
                       className="w-full bg-green-600 hover:bg-green-500 text-white rounded-xl"
                     >
-                      Add User
+                      Dodaj BM
                     </Button>
                   </div>
                 </DialogContent>
@@ -200,7 +217,7 @@ export default function SVBmChartPage() {
                           variant="destructive"
                           className="py-1 px-4 text-xs font-medium text-white focus:outline-none bg-red-900 rounded-full border border-red-600 hover:bg-red-800 focus:z-10 focus:ring-4 focus:ring-gray-400 "
                         >
-                          Delete
+                          Usun
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -209,7 +226,7 @@ export default function SVBmChartPage() {
               </Table>
               <div className="flex justify-between items-center mt-4">
                 <div className="space-x-2">
-                  <label htmlFor="rowsPerPage" className="text-sm text-gray-400">Rows per page:</label>
+                  <label htmlFor="rowsPerPage" className="text-sm text-gray-400">Ilosc rekordow:</label>
                   <select
                     id="rowsPerPage"
                     value={rowsPerPage}
@@ -228,7 +245,7 @@ export default function SVBmChartPage() {
                     disabled={page === 0}
                     className="text-white hover:bg-gray-700"
                   >
-                    Previous
+                    Cofnij
                   </Button>
                   <Button
                     variant="ghost"
@@ -236,7 +253,7 @@ export default function SVBmChartPage() {
                     disabled={(page + 1) * rowsPerPage >= bmData.length}
                     className="text-white hover:bg-gray-700"
                   >
-                    Next
+                    Dalej
                   </Button>
                 </div>
               </div>
