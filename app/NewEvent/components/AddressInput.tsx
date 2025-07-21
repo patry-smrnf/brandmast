@@ -9,14 +9,6 @@ import { shop_response } from "../types/shopsType";
 // Lazy-load MapPicker only on client
 const MapPicker = dynamic(() => import("./MapPicker"), { ssr: false });
 
-const addressSuggestions = [
-  "Chmielna 11",
-  "Elektryczna 11",
-  "Świętokrzyska 31",
-  "Marszałkowska 20",
-  "Nowy Świat 5",
-];
-
 type AddressInputProps = {
   value: string;
   onChange: (newValue: string) => void;

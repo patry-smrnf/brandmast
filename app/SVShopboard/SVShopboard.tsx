@@ -129,7 +129,6 @@ export default function ShopsBoard() {
         }
 
         setShopsData((prev) => prev.filter((shop) => shop.id_shop !== id));
-        toast.error(`Pomyslnie usunieto`);
     }
     const handleAddShop = async() => {
         if (!shopAddress || !shopName || !shopZipCode) {

@@ -13,17 +13,19 @@ const markerIcon = new Icon({
   iconAnchor: [12, 41],
 });
 
-const locations: { address: string; position: LatLngExpression }[] = [
-  { address: "Chmielna 11", position: [52.2305, 21.0069] },
-  { address: "Elektryczna 11", position: [52.2365, 21.0020] },
-  { address: "Świętokrzyska 31", position: [52.2352, 21.0100] },
-  { address: "Marszałkowska 20", position: [52.2297, 21.0117] },
-  { address: "Nowy Świat 5", position: [52.2330, 21.0150] },
-];
+type Shop = {
+  name: string
+  id_shop: number;
+  address: string;
+  lat: string;
+  lon: string;
+};
 
 export default function MapPicker({
+  shops,
   onSelect,
 }: {
+  shops: Shop[],
   onSelect: (address: string) => void;
 }) {
   const center: LatLngExpression = [52.2305, 21.0069];
@@ -41,16 +43,16 @@ export default function MapPicker({
           attribution='&copy; OpenStreetMap contributors'
         />
 
-        {locations.map((loc, i) => (
+        {shops.map((shop) => (
           <Marker
-            key={i}
-            position={loc.position}
+            key={shop.id_shop}
+            position={[parseFloat(shop.lat), parseFloat(shop.lon)]}
             icon={markerIcon}
             eventHandlers={{
-              click: () => onSelect(loc.address),
+              click: () => onSelect(shop.address),
             }}
           >
-            <Popup>{loc.address}</Popup>
+            <Popup>{shop.name} - {shop.address}</Popup>
           </Marker>
         ))}
       </MapContainer>
