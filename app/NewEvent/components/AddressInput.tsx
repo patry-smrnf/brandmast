@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
-
+import { API_BASE_URL } from "@/app/config";
+import { shop_response } from "../types/shopsType";
 // Lazy-load MapPicker only on client
 const MapPicker = dynamic(() => import("./MapPicker"), { ssr: false });
 
@@ -23,17 +24,35 @@ type AddressInputProps = {
 
 export default function AddressInput({ value, onChange }: AddressInputProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [shopsData, setShopsData] = useState<shop_response[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/shop/getAll`, {
+            method: "GET",
+            credentials: "include",
+        });        
+      const json = await res.json();
+        setShopsData(json);
+      } catch (error) {
+        console.error('Failed to fetch dashboard data', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  
+    fetchData();
+  }, []);
 
-  const filteredSuggestions = addressSuggestions.filter((address) =>
-    address.toLowerCase().includes(value.toLowerCase())
+  const filteredSuggestions = shopsData.filter((shop) =>
+    shop.address.toLowerCase().includes(value.toLowerCase())
   );
 
   return (
 <div className="relative w-full">
   <div className="mb-6">
-    <MapPicker
+    <MapPicker shops={shopsData}
       onSelect={(selectedAddress) => {
         onChange(selectedAddress);
         setShowSuggestions(false);
@@ -57,16 +76,16 @@ export default function AddressInput({ value, onChange }: AddressInputProps) {
   />
   {showSuggestions && filteredSuggestions.length > 0 && (
     <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-gray-600 rounded-md shadow-lg">
-      {filteredSuggestions.map((suggestion, index) => (
+      {filteredSuggestions.map((shop) => (
         <div
-          key={index}
+          key={shop.id_shop}
           className="px-3 py-2 hover:bg-gray-700 cursor-pointer text-white text-sm"
           onMouseDown={() => {
-            onChange(suggestion);
+            onChange(shop.address);
             setShowSuggestions(false);
           }}
         >
-          {suggestion}
+          {shop.address}
         </div>
       ))}
     </div>

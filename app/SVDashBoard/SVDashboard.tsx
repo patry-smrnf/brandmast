@@ -27,6 +27,34 @@ export default function SVDashboard() {
 
     const menuRef = useRef<HTMLDivElement | null>(null);
     const [menuOpen, setMenuOpen] = useState(false);
+
+      const handleClick = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/sv/dyspo`, {
+        method: 'GET',
+        credentials: 'include', // This sends cookies/auth info
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // If you expect a file (Excel), handle the response as a blob:
+      const blob = await response.blob();
+
+      // Create a download link and click it programmatically
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'file.xlsx'; // Set desired file name
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error fetching the Excel file:', error);
+    }
+  };
   
     useEffect(() => {
         const fetchBMdata = async () => {
@@ -173,11 +201,12 @@ export default function SVDashboard() {
               </div>
               </CardFooter>
           </Card>
-          <Link href="/EditNewEvent" className="flex-1">
-            <div className="h-full bg-green-800/20 backdrop-blur-md border border-dashed border-green-600 shadow-xl rounded-2xl hover:scale-[1.05] transition-transform duration-300 flex items-center justify-center cursor-pointer">
+          <Link href="/" className="flex-1">
+            <div onClick={handleClick} className="h-full bg-green-800/20 backdrop-blur-md border border-dashed border-green-600 shadow-xl rounded-2xl hover:scale-[1.05] transition-transform duration-300 flex items-center justify-center cursor-pointer">
               <span className="text-4xl text-gray-400">Pobierz Excela</span>
             </div>
           </Link>
+
           </div>
           {/* Form Section */}
         <Card className="w-full bg-gray-900/50 backdrop-blur-md border border-gray-700 text-white">

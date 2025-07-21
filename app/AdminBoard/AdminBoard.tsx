@@ -13,20 +13,21 @@ import { Trash2, ChevronLeft, ChevronRight, Plus, FileInput } from "lucide-react
 
 import ContextMenu from "../SVDashBoard/ContextMenu";
 import { API_BASE_URL } from "../config";
-import { shop_response } from "./types/shopType";
+import { sv_responses } from "./types/SvsResponse";
 import { toast } from "sonner";
 
-export default function ShopsBoard() {
+
+export default function AdminBoard() {
     const [rowsToShow, setRowsToShow] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const menuRef = useRef(null);
     const [menuOpen, setMenuOpen] = useState(false);
-    const [shopsData, setShopsData] = useState<shop_response[]>([]);
+    const [shopsData, setShopsData] = useState<sv_responses[]>([]);
     
     useEffect(() => {
             const fetchShopsData = async () => {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/shop/getAll`, {
+                    const response = await fetch(`${API_BASE_URL}/api/admin/getAllTeams`, {
                         method: "GET",
                         credentials: "include"
                     });
@@ -37,7 +38,7 @@ export default function ShopsBoard() {
                         throw new Error("Failed to fetch data");
                     }
 
-                    const data: shop_response[] = await response.json();
+                    const data: sv_responses[] = await response.json();
                     setShopsData(data);
                 }
                 catch(error) {
@@ -128,7 +129,7 @@ export default function ShopsBoard() {
             toast.error("error" + error);
         }
 
-        setShopsData((prev) => prev.filter((shop) => shop.id_shop !== id));
+        setShopsData((prev) => prev.filter((shop) => shop.id_sv !== id));
         toast.error(`Pomyslnie usunieto`);
     }
     const handleAddShop = async() => {
@@ -138,13 +139,13 @@ export default function ShopsBoard() {
         }
 
         const payload = {
-            address: shopAddress,
-            name: shopName,
-            zipcode: shopZipCode
+            login: shopAddress,
+            area_name: shopName,
+            type: shopZipCode
         };
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/shop/addShop`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/createSV`, {
             credentials: "include",
             method: "POST",
             headers: {
@@ -159,7 +160,7 @@ export default function ShopsBoard() {
             throw new Error(result.message);
             }
     
-            toast.success(result.message || "BM created successfully!");
+            toast.success(result.message || "SV created successfully!");
         } 
         catch(error) {
             toast.error("Blad: " + error);
@@ -183,19 +184,18 @@ export default function ShopsBoard() {
       <Card className="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-xl backdrop-blur-md max-w-7xl w-full">
         <CardHeader>
           <CardTitle className="text-2xl md:text-3xl font-semibold text-white">
-            Zarzadzaj sklepami w swoim area
+            Zarzadzaj SV
           </CardTitle>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <Table className="min-w-full text-sm">
             <TableHeader>
               <TableRow className="bg-gray-800 rounded-t-xl">
-                <TableHead className="text-left text-gray-300 px-4 py-3">Nazwa</TableHead>
-                <TableHead className="text-left text-gray-300 px-4 py-3">Address</TableHead>
-                <TableHead className="text-left text-gray-300 px-4 py-3">Lon</TableHead>
-                <TableHead className="text-left text-gray-300 px-4 py-3">Lat</TableHead>
-                <TableHead className="text-left text-gray-300 px-4 py-3">Zip-code</TableHead>
-                <TableHead className="text-center text-gray-300 px-4 py-3">Actions</TableHead>
+                <TableHead className="text-left text-gray-300 px-4 py-3">Login</TableHead>
+                <TableHead className="text-left text-gray-300 px-4 py-3">Area</TableHead>
+                <TableHead className="text-left text-gray-300 px-4 py-3">Type</TableHead>
+                <TableHead className="text-left text-gray-300 px-4 py-3">Team id</TableHead>
+                <TableHead className="text-left text-gray-300 px-4 py-3">Delete</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -208,21 +208,20 @@ export default function ShopsBoard() {
               ) : (
                 displayedShops.map((shop) => (
                   <TableRow
-                    key={shop.id_shop}
+                    key={shop.id_sv}
                     className="hover:bg-gray-700 transition-colors duration-200"
                   >
-                    <TableCell className="px-4 py-3 text-gray-50">{shop.name}</TableCell>
-                    <TableCell className="px-4 py-3 text-gray-50">{shop.address}</TableCell>
-                    <TableCell className="px-4 py-3 text-gray-50">{shop.lon}</TableCell>
-                    <TableCell className="px-4 py-3 text-gray-50">{shop.lat}</TableCell>
-                    <TableCell className="px-4 py-3 text-gray-50">{shop.zipcode}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-50">{shop.login}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-50">{shop.area_name}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-50">{shop.type}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-50">{shop.team_id}</TableCell>
                     <TableCell className="px-4 py-3 text-center">
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDelete(shop.id_shop)}
+                        onClick={() => handleDelete(shop.id_sv)}
                         className="rounded-full px-3 py-1"
-                        aria-label={`Delete shop ${shop.name}`}
+                        aria-label={`Delete shop ${shop.login}`}
                       >
                         <Trash2 size={16} />
                       </Button>
@@ -288,18 +287,18 @@ export default function ShopsBoard() {
                 </DialogTrigger>
                 <DialogContent className="bg-gray-900 text-white border border-gray-700 max-w-md w-full rounded-xl backdrop-blur-xl">
                     <DialogHeader>
-                        <DialogTitle className="text-lg">Dodaj nowy sklep</DialogTitle>
+                        <DialogTitle className="text-lg">Add new SV</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                         <div>
-                        <Label htmlFor="shop_address">Address</Label>
-                        <Input id="shop_address" placeholder="Zbawiciela 5" value={shopAddress} onChange={(e) => setShopAddress(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
+                        <Label htmlFor="sv_login">Login</Label>
+                        <Input id="sv_login" placeholder="R210D2V3_##LGOIN" value={shopAddress} onChange={(e) => setShopAddress(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
 
-                        <Label htmlFor="shop_name">Name</Label>
-                        <Input id="shop_name" placeholder="Zabka" value={shopName} onChange={(e) => setShopName(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
+                        <Label htmlFor="area_name">Area name</Label>
+                        <Input id="area_name" placeholder="R210D2V3" value={shopName} onChange={(e) => setShopName(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
 
-                        <Label htmlFor="shop_zipcode">ZipCode</Label>
-                        <Input id="shop_zipcode" placeholder="04-444" value={shopZipCode} onChange={(e) => setShopZipCode(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
+                        <Label htmlFor="team_type">Type</Label>
+                        <Input id="team_type" placeholder="np. horeca, detal" value={shopZipCode} onChange={(e) => setShopZipCode(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
 
                         </div>
                         <Button onClick={handleAddShop} className="w-full bg-green-600 hover:bg-green-500 text-white rounded-xl" >
@@ -321,4 +320,4 @@ export default function ShopsBoard() {
     </div>
     </>
   );
-}
+};

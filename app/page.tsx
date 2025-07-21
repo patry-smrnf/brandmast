@@ -7,8 +7,9 @@ import NotAuthorized from "./Not-Authorized/page";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "./config";
+import AdminPage from "./AdminBoard/page";
 
-type UserRole = "BM" | "SV" | null;
+type UserRole = "BM" | "SV" | "ADMIN" | null;
 
 export default function ModernDarkPage() {
   const [role, setRole] = useState<UserRole>(null);
@@ -28,6 +29,9 @@ export default function ModernDarkPage() {
         }
         if(userRole == "SV") {
           setRole("SV");
+        }
+        if(userRole == "ADMIN") {
+          setRole("ADMIN");
         }
 
         setLoading(false);
@@ -49,6 +53,7 @@ export default function ModernDarkPage() {
 
   if (role === "BM") return <BMDashBoard />;
   if (role === "SV") return <SVDashboard />;
-
+  if (role === "ADMIN") return <AdminPage/>
+ 
   return <NotAuthorized />;
 }
