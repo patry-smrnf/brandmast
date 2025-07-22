@@ -16,36 +16,38 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      setLoading(true);
-      setError(null);
+const handleSubmit = useCallback(
+  async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-      try {
-        const { data } = await axios.post(
-          `${API_BASE_URL}/api/auth/login`,
-          { login },
-          {
-            headers: { "Content-Type": "application/json" },
-            timeout: 5000,
-            withCredentials: true,
-          }
-        );
-        router.push("/");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // same as axios's withCredentials: true
+        body: JSON.stringify({ login }),
+      });
 
-      } catch (err: any) {
-        if (axios.isAxiosError(err)) {
-          setError(err.response?.data?.message || "Błąd logowania");
-        } else {
-          setError("Nieznany błąd");
-        }
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        const errorData = await res.json();
+        setError(errorData.message || "Błąd logowania");
+        return;
       }
-    },
-    [login, router]
-  );
+
+      router.push("/");
+    } catch (err) {
+      setError("Nieznany błąd");
+    } finally {
+      setLoading(false);
+    }
+  },
+  [login, router]
+);
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
