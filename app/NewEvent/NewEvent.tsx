@@ -11,6 +11,8 @@ import DatePickerInput from "./components/DatePickerInput";
 import AddressInput from "./components/AddressInput";
 import TimeInputs from "./components/TimeInput";
 import { API_BASE_URL } from "../config";
+import { ArrowLeft } from "lucide-react";
+
 
 function normalizeTime(input: string): string {
   const parts = input.split(":");
@@ -68,36 +70,47 @@ export default function NewEventPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 sm:p-6">
-      <form onSubmit={handleSubmit} className="bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 sm:p-8 max-w-md w-full space-y-4 sm:space-y-6 shadow-xl border border-gray-700">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-4 sm:mb-6">
-          Dodaj akcje
-        </h1>
-
-        <div>
-          <Label htmlFor="date" className="mb-1 text-gray-300 text-sm sm:text-base">
-            Event Date
-          </Label>
-          <DatePickerInput value={date} onChange={setDate} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-xl bg-gray-800/60 border border-gray-700 backdrop-blur-lg rounded-2xl p-6 sm:p-8 shadow-2xl">
+        {/* Return Button */}
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => (window.location.href = "/")}
+            className="text-gray-400 hover:text-white flex items-center gap-2 px-0"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm">Back to Dashboard</span>
+          </Button>
         </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-        <div className="mt-4 sm:mt-6">
-          <AddressInput value={title} onChange={setTitle} />
-        </div>
+          <div>
+            <Label htmlFor="date" className="mb-1 text-gray-300 text-sm sm:text-base">
+              Event Date
+            </Label>
+            <DatePickerInput value={date} onChange={setDate} />
+          </div>
 
-        <div className="mt-4 sm:mt-6">
-          <TimeInputs
-            startTime={startTimeSys}
-            stopTime={stopTimeSys}
-            onStartChange={setTimeStartSys}
-            onStopChange={setTimeStopSys}
-          />
-        </div>
+          <div className="mt-4 sm:mt-6">
+            <AddressInput value={title} onChange={setTitle} />
+          </div>
 
-        <Button type="submit" className="w-full text-sm sm:text-base">
-          Save Changes
-        </Button>
-      </form>
+          <div className="mt-4 sm:mt-6">
+            <TimeInputs
+              startTime={startTimeSys}
+              stopTime={stopTimeSys}
+              onStartChange={setTimeStartSys}
+              onStopChange={setTimeStopSys}
+            />
+          </div>
+
+          <Button type="submit" className="w-full text-sm sm:text-base">
+            Save Changes
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
