@@ -19,9 +19,16 @@ export default function ModernDarkPage() {
   useEffect(() => {
     async function verifyAuth() {
       try {
-        const { data } = await axios.get(`${API_BASE_URL}/api/auth/me`, {
-          withCredentials: true,
+        const res = await fetch("/api/auth/me", {
+          method: "GET",
+          credentials: "include", // Ensures cookies are sent
         });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch user");
+        }
+
+        const data = await res.json();
 
         const userRole = data.role?.toUpperCase();
         if(userRole == "BM") {

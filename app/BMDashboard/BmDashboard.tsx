@@ -23,7 +23,7 @@ export default function BMDashboardPanel() {
   useEffect(() => {
   const fetchCards = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/bm/actions`, {
+      const response = await fetch(`/api/bm/actions`, {
         method: "GET",
         credentials: "include",
       });

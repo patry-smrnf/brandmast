@@ -26,7 +26,7 @@ export default function ShopsBoard() {
     useEffect(() => {
             const fetchShopsData = async () => {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/shop/getAll`, {
+                    const response = await fetch(`/api/shop/getAll`, {
                         method: "GET",
                         credentials: "include"
                     });
@@ -80,7 +80,7 @@ export default function ShopsBoard() {
 
           setJsonContent(parsed);
 
-          const response = await fetch(`${API_BASE_URL}/api/shop/addShopsJson`, {
+          const response = await fetch(`/api/shop/addShopsJson`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -142,8 +142,9 @@ export default function ShopsBoard() {
             zipcode: shopZipCode
         };
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/shop/addShop`, {
+        try { 
+          
+            const response = await fetch(`/api/shop/addShop`, {
             credentials: "include",
             method: "POST",
             headers: {

@@ -47,7 +47,7 @@ export default function EditPastAkcjaPage() {
         szkolenie: isActive,
       };
 
-      const response = await fetch(`${API_BASE_URL}/api/bm/editAction`, {
+      const response = await fetch(`/api/bm/editAction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +75,7 @@ export default function EditPastAkcjaPage() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/bm/delAction`, {
+      const response = await fetch(`/api/bm/delAction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +100,7 @@ export default function EditPastAkcjaPage() {
   useEffect(() => {
     const fetchAkcjaData = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/bm/action?id=${id}`, {
+        const response = await fetch(`/api/bm/action?id=${id}`, {
           method: "GET",
           credentials: "include",
         });

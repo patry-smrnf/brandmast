@@ -48,7 +48,7 @@ export default function NewEventPage() {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/bm/addAction`, {
+      const response = await fetch(`/api/bm/addAction`, {
         credentials: "include",
         method: "POST",
         headers: {

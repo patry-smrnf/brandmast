@@ -39,7 +39,7 @@ export default function SVBmChartPage() {
   useEffect(() => {
     const fetchBMdata = async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/sv/myBMs`, {
+            const response = await fetch(`/api/sv/myBMs`, {
                 method: "GET",
                 credentials: "include"
             });
@@ -65,7 +65,7 @@ export default function SVBmChartPage() {
       id_bm: id,
     };
     try{
-      const response = await fetch(`${API_BASE_URL}/api/sv/deleteBM`, {
+      const response = await fetch(`/api/sv/deleteBM`, {
         credentials: "include",
         method: "POST",
         headers: {
@@ -102,7 +102,7 @@ export default function SVBmChartPage() {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/sv/createBM`, {
+      const response = await fetch(`/api/sv/createBM`, {
         credentials: "include",
         method: "POST",
         headers: {

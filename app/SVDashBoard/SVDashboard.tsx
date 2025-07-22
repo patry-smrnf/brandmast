@@ -30,7 +30,7 @@ export default function SVDashboard() {
 
       const handleClick = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/sv/dyspo`, {
+      const response = await fetch(`/api/sv/dyspo`, {
         method: 'GET',
         credentials: 'include', // This sends cookies/auth info
       });
@@ -59,7 +59,7 @@ export default function SVDashboard() {
     useEffect(() => {
         const fetchBMdata = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/sv/myBMs`, {
+                const response = await fetch(`/api/sv/myBMs`, {
                     method: "GET",
                     credentials: "include"
                 });

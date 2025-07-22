@@ -21,7 +21,7 @@ export default function AddressInput({ value, onChange }: AddressInputProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/shop/getAll`, {
+        const res = await fetch(`/api/shop/getAll`, {
             method: "GET",
             credentials: "include",
         });        

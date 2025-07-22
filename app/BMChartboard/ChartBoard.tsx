@@ -85,7 +85,7 @@ const BMChartBoard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/bm/actionsForChart`, {
+        const res = await fetch(`/api/bm/actionsForChart`, {
             method: "GET",
             credentials: "include",
         });        

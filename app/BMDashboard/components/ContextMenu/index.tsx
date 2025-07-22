@@ -43,7 +43,7 @@ export default function ContextMenu({ closeMenu }: ContextMenuProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      await fetch(`/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

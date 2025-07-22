@@ -27,7 +27,7 @@ export default function AdminBoard() {
     useEffect(() => {
             const fetchShopsData = async () => {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/admin/getAllTeams`, {
+                    const response = await fetch(`/api/admin/getAllTeams`, {
                         method: "GET",
                         credentials: "include"
                     });
@@ -81,7 +81,7 @@ export default function AdminBoard() {
 
           setJsonContent(parsed);
 
-          const response = await fetch(`${API_BASE_URL}/api/shop/addShopsJson`, {
+          const response = await fetch(`/api/shop/addShopsJson`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -108,7 +108,7 @@ export default function AdminBoard() {
         };
 
         try{
-            const response = await fetch(`${API_BASE_URL}/api/shop/delShop`, {
+            const response = await fetch(`/api/shop/delShop`, {
                 credentials: "include",
                 method: "POST",
                 headers: {
@@ -145,7 +145,7 @@ export default function AdminBoard() {
         };
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/admin/createSV`, {
+            const response = await fetch(`/api/admin/createSV`, {
             credentials: "include",
             method: "POST",
             headers: {
