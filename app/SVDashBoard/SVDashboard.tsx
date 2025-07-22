@@ -21,8 +21,8 @@ function calculateHours(start: string, stop: string): number {
 }
 
 export default function SVDashboard() {
-    const [currentMonth, setCurrentMonth] = React.useState(new Date(2025, 6, 1)); // July 2025
-    const [selectedDate, setSelectedDate] = React.useState(new Date(2025, 6, 1));
+    const [currentMonth, setCurrentMonth] = React.useState(new Date());
+    const [selectedDate, setSelectedDate] = React.useState(new Date());
     const [bmData, setBmData] = useState<BMResData[]>();
 
     const menuRef = useRef<HTMLDivElement | null>(null);
