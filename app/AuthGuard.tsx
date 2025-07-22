@@ -18,9 +18,14 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
   useEffect(() => {
     async function verifyAuth() {
       try {
-        const { data } = await axios.get(`${API_BASE_URL}/api/auth/me`, {
-          withCredentials: true,
+        const res = await fetch("/api/auth/me", {
+          method: "GET",
+          credentials: "include", // same as axios's withCredentials: true
         });
+
+        if (!res.ok) throw new Error("Unauthorized");
+
+        const data = await res.json();
 
         const userRole = data.role?.toUpperCase();
         if (!allowedRoles.includes(userRole)) {
@@ -36,6 +41,7 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
 
     verifyAuth();
   }, [allowedRoles, router]);
+
 
   if (loading) {
     return (

@@ -107,7 +107,7 @@ export default function ShopsBoard() {
         };
 
         try{
-            const response = await fetch(`${API_BASE_URL}/api/shop/delShop`, {
+            const response = await fetch(`/api/shop/delShop`, {
                 credentials: "include",
                 method: "POST",
                 headers: {
