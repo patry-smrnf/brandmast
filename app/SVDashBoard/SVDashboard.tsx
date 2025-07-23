@@ -211,7 +211,7 @@ export default function SVDashboard() {
           {/* Form Section */}
         <Card className="w-full bg-gray-900/50 backdrop-blur-md border border-gray-700 text-white">
           <CardContent className="p-6 flex flex-col gap-4">
-            <h1 className="text-xl font-bold">Dodaj Alert dla swoich bm</h1>
+            <h1 className="text-xl font-bold">Dodaj Alert dla swoich bm - NIE ZOSTALO ZAIMPLEMENTOWANE W SYSTEMIE</h1>
             <Input
               type="text"
               placeholder="Tresc alertu"
