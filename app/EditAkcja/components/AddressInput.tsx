@@ -37,9 +37,12 @@ export default function AddressInput({ value, onChange }: AddressInputProps) {
     fetchData();
   }, []);
 
-  const filteredSuggestions = shopsData.filter((shop) =>
-    shop.address.toLowerCase().includes(value.toLowerCase())
-  );
+const normalizeString = (str: string) =>
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+const filteredSuggestions = shopsData.filter((shop) =>
+  normalizeString(shop.address).includes(normalizeString(value))
+);
 
   return (
 <div className="relative w-full">
