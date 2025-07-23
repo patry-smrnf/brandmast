@@ -5,6 +5,8 @@ import HelperPage from "./BMHelperPage";
 
 export default function BMHelperPage() {
   return (
-    <HelperPage/>
+    <AuthGuard allowedRoles={["BM"]}>
+      <HelperPage/>
+    </AuthGuard>
   );
 }
