@@ -14,11 +14,12 @@ import { BMResData } from "./types/BMResponse";
 import ContextMenu from "./ContextMenu";
 import { API_BASE_URL } from "../config";
 
-function calculateHours(start: string, stop: string): number {
-  const [h1, m1] = start.split(":").map(Number);
-  const [h2, m2] = stop.split(":").map(Number);
-  return ((h2 * 60 + m2) - (h1 * 60 + m1)) / 60;
-}
+const calculateHours = (start: string, end: string): number => {
+  const startTime = new Date(`1970-01-01T${start}Z`);
+  const endTime = new Date(`1970-01-01T${end}Z`);
+  if (endTime < startTime) endTime.setDate(endTime.getDate() + 1);
+  return (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+};
 
 export default function SVDashboard() {
     const [currentMonth, setCurrentMonth] = React.useState(new Date());
