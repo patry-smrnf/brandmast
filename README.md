@@ -43,3 +43,5 @@ This is the **frontend layer** of a web application designed to manage employee 
 | **ShadCN UI**     | Accessible and beautiful UI components           |
 | **Lucide Icons**  | Clean and modern icon set for React             |
 
+## Chart
+[logo]: [https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png ](https://github.com/patry-smrnf/brandmast/blob/master/diagram%20(1).png) "Chart"
