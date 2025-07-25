@@ -139,7 +139,7 @@ export default function SVBmChartPage() {
           {menuOpen && <ContextMenu closeMenu={() => setMenuOpen(false)} />}
       </div>
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col items-center px-4 py-6 sm:px-6 space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl">
+        <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
           <Card className="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-xl backdrop-blur-md">
             <CardHeader>
               <CardTitle className="text-lg md:text-xl font-semibold text-white">Statystyki</CardTitle>
@@ -195,8 +195,10 @@ export default function SVBmChartPage() {
                 <TableHeader>
                   <TableRow className="bg-gray-800">
                     <TableHead className="text-left text-gray-200">Login</TableHead>
+                    <TableHead className="text-left text-gray-200">Imie</TableHead>
+                    <TableHead className="text-left text-gray-200">Nazwisko</TableHead>
                     <TableHead className="text-left text-gray-200">Area</TableHead>
-                    <TableHead className="text-left text-gray-200">Actions</TableHead>
+                    <TableHead className="text-left text-gray-200">Usuwanie</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -209,14 +211,16 @@ export default function SVBmChartPage() {
                         {user.login}
                       </TableCell>
                       <TableCell className="text-gray-300 whitespace-nowrap">
+                          Zostanie dodane
+                      </TableCell>
+                      <TableCell className="text-gray-300 whitespace-nowrap">
+                          Zostanie dodane
+                      </TableCell>
+                      <TableCell className="text-gray-300 whitespace-nowrap">
                         {user.area_name}
                       </TableCell>
                       <TableCell>
-                        <Button
-                          onClick={() => handleDelete(user.id_bm)}
-                          variant="destructive"
-                          className="py-1 px-4 text-xs font-medium text-white focus:outline-none bg-red-900 rounded-full border border-red-600 hover:bg-red-800 focus:z-10 focus:ring-4 focus:ring-gray-400 "
-                        >
+                        <Button onClick={() => handleDelete(user.id_bm)} variant="destructive" className="py-1 px-4 text-xs font-medium text-white focus:outline-none bg-red-900 rounded-full border border-red-600 hover:bg-red-800 focus:z-10 focus:ring-4 focus:ring-gray-400 ">
                           Usun
                         </Button>
                       </TableCell>
