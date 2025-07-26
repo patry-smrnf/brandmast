@@ -30,6 +30,9 @@ import { API_BASE_URL } from "../config";
 
 export default function SVBmChartPage() {
   const [plhLogin, setPLHLogin] = useState("");
+  const [bmImie, setBMImie] = useState("");
+  const [bmNazwisko, setBMNazwisko] = useState("");
+
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const [page, setPage] = useState(0);
   const menuRef = useRef(null);
@@ -99,6 +102,8 @@ export default function SVBmChartPage() {
 
     const payload = {
       login: plhLogin,
+      imie: bmImie,
+      nazwisko: bmNazwisko
     };
 
     try {
@@ -128,7 +133,7 @@ export default function SVBmChartPage() {
 
   const paginatedUsers = bmData.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
-  return (
+    return (
     <>
       <div ref={menuRef} className="fixed top-4 right-4 z-50" onClick={(e) => e.stopPropagation()} >
           <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" className="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center focus:outline-none" type="button">
@@ -172,18 +177,17 @@ export default function SVBmChartPage() {
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="login">login PLH</Label>
-                      <Input
-                        id="login"
-                        placeholder="PLHXXXXX"
-                        value={plhLogin}
-                        onChange={(e) => setPLHLogin(e.target.value)}
-                        className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"
-                      />
+                      <Input id="login" placeholder="PLHXXXXX" value={plhLogin} onChange={(e) => setPLHLogin(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
                     </div>
-                    <Button
-                      onClick={handleCreate}
-                      className="w-full bg-green-600 hover:bg-green-500 text-white rounded-xl"
-                    >
+                    <div>
+                      <Label htmlFor="imie">Imie</Label>
+                      <Input id="imie" placeholder="Eustachy" value={bmImie} onChange={(e) => setBMImie(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
+                    </div>
+                     <div>
+                      <Label htmlFor="nazwisko">Nazwisko</Label>
+                      <Input id="nazwisko" placeholder="Tijara" value={bmNazwisko} onChange={(e) => setBMNazwisko(e.target.value)} className="mt-1 bg-gray-800 text-white border border-gray-600 rounded-xl"/>
+                    </div>
+                    <Button onClick={handleCreate} className="w-full bg-green-600 hover:bg-green-500 text-white rounded-xl">
                       Dodaj BM
                     </Button>
                   </div>
@@ -203,10 +207,7 @@ export default function SVBmChartPage() {
                 </TableHeader>
                 <TableBody>
                   {paginatedUsers.map((user) => (
-                    <TableRow
-                      key={user.id_bm}
-                      className="hover:bg-gray-800/40 transition-colors duration-200"
-                    >
+                    <TableRow key={user.id_bm} className="hover:bg-gray-800/40 transition-colors duration-200">
                       <TableCell className="text-white font-medium whitespace-nowrap">
                         {user.login}
                       </TableCell>
