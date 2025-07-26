@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🗓️ Availability Management Frontend
 
-## Getting Started
+This is the **frontend layer** of a web application designed to manage employee availability. The system offers tools for both employees and management to track, schedule, and report working hours and tasks efficiently.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### For Employees
+- Add and manage availability actions.
+- Select store locations via an interactive map or by entering an address.
+- Filter actions by store type and status (upcoming / completed).
+- View a summary of total working hours (planned vs actual).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### For Management
+- Overview of all employees and their scheduled actions in a calendar.
+- Export all actions to Excel format.
+- Manage available stores and assign them to employees.
+- Add and remove employee records.
+- Access charts and visual summaries of working hours.
+- Share guides and documentation with employees.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📂 App Structure
 
-## Learn More
+| Path               | Description                                                                 |
+|--------------------|-----------------------------------------------------------------------------|
+| `/SVDashBoard`     | Dashboard for management: employee list, calendar view, Excel export.       |
+| `/SVShopBoard`     | Table of stores assigned to the SV team and their members.                  |
+| `/SVBmChart`       | Manage employee list: add/remove members.                                   |
+| `/BMDashBoard`     | Employee dashboard to view and manage actions. Includes smart filtering.    |
+| `/BMChartBoard`    | Charts and summaries comparing scheduled vs real hours.                     |
+| `/BMHelperPage`    | Guides and how-tos to assist employees.                                     |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧱 Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Technology        | Description                                      |
+|-------------------|--------------------------------------------------|
+| **React**         | Core library for building the UI                |
+| **TypeScript**    | Type-safe development experience                 |
+| **Tailwind CSS**  | Utility-first styling framework                  |
+| **ShadCN UI**     | Accessible and beautiful UI components           |
+| **Lucide Icons**  | Clean and modern icon set for React             |
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Chart
+![Project Diagram](https://github.com/patry-smrnf/brandmast/blob/master/diagram%20(1).png "Project diagram")
