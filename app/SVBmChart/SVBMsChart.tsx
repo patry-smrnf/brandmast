@@ -211,10 +211,10 @@ export default function SVBmChartPage() {
                         {user.login}
                       </TableCell>
                       <TableCell className="text-gray-300 whitespace-nowrap">
-                          Zostanie dodane
+                          {user.imie}
                       </TableCell>
                       <TableCell className="text-gray-300 whitespace-nowrap">
-                          Zostanie dodane
+                          {user.nazwisko}
                       </TableCell>
                       <TableCell className="text-gray-300 whitespace-nowrap">
                         {user.area_name}

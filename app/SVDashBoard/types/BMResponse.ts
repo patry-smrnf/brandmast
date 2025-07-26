@@ -1,6 +1,8 @@
 export interface BMResData {
     id_bm: number,
     login: string,
+    imie: string,
+    nazwisko: string,
     sv_id: number,
     team_id: number,
     type: string,
