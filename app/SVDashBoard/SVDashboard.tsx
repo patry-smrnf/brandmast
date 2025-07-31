@@ -22,41 +22,42 @@ const calculateHours = (start: string, end: string): number => {
 };
 
 export default function SVDashboard() {
-    const [currentMonth, setCurrentMonth] = React.useState(new Date());
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
+    //Dane z serwera dotyczace BM
     const [bmData, setBmData] = useState<BMResData[]>();
 
+    //Context Menu
     const menuRef = useRef<HTMLDivElement | null>(null);
     const [menuOpen, setMenuOpen] = useState(false);
 
-      const handleClick = async () => {
-    try {
-      const response = await fetch(`/api/sv/dyspo`, {
-        method: 'GET',
-        credentials: 'include', // This sends cookies/auth info
-      });
+    const downloadExcel = async () => {
+      try {
+        const response = await fetch(`/api/sv/dyspo`, {
+          method: 'GET',
+          credentials: 'include', // This sends cookies/auth info
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // If you expect a file (Excel), handle the response as a blob:
+        const blob = await response.blob();
+
+        // Create a download link and click it programmatically
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'file.xlsx'; // Set desired file name
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Error fetching the Excel file:', error);
       }
-
-      // If you expect a file (Excel), handle the response as a blob:
-      const blob = await response.blob();
-
-      // Create a download link and click it programmatically
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'file.xlsx'; // Set desired file name
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Error fetching the Excel file:', error);
-    }
-  };
+    };
   
+    //Pobieranie danych BM
     useEffect(() => {
         const fetchBMdata = async () => {
             try {
@@ -81,25 +82,27 @@ export default function SVDashboard() {
         fetchBMdata();
     }, []);
 
+    //<-- Mechanika miesiecy
+    //Zarzadzanie ktory miesiac, ma sie wyswietlic
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(new Date());
+
+    //Wybrana data
     const selectedDateStr = format(selectedDate, "dd.MM.yyyy");
 
     const summaryByMonth = (bmData ?? []).reduce<Record<string, number>>((acc, user) => {
-    const total = user.akcje
-        .map((a) => {
-        const d = parse(a.date, "dd.MM.yyyy", new Date());
-        return {
-            date: d,
-            hours: calculateHours(a.start_sys, a.stop_sys),
-        };
-        })
-        .filter((x) =>
-        x.date.getFullYear() === currentMonth.getFullYear() &&
-        x.date.getMonth() === currentMonth.getMonth()
-        )
+      const total = user.akcje.map((a) => {
+          const d = parse(a.date, "dd.MM.yyyy", new Date());
+
+          return {
+              date: d,
+              hours: calculateHours(a.start_sys, a.stop_sys),
+          };
+        }).filter((x) => x.date.getFullYear() === currentMonth.getFullYear() && x.date.getMonth() === currentMonth.getMonth())
         .reduce((sum, x) => sum + x.hours, 0);
 
-    acc[user.login] = total;
-    return acc;
+      acc[user.login] = total;
+      return acc;
     }, {});
 
     const summaryArray = Object.entries(summaryByMonth).map(([username, hrs]) => ({
@@ -118,8 +121,17 @@ export default function SVDashboard() {
     const nextMonth = () =>
         setCurrentMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1));
 
+    //<-- Mechanika pokazanych uzytkonikow
+    const [rowsPerPage, setRowsPerPage] = React.useState(5); // or 10, whatever default
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const totalPages = Math.ceil(summaryArray.length / rowsPerPage);
+    const paginatedSummary = summaryArray.slice(
+      (currentPage - 1) * rowsPerPage,
+      currentPage * rowsPerPage
+    );
+
     return(
-        <>
+      <>
         {/* Context menu button */}
         <div ref={menuRef} className="fixed top-4 right-4 z-50" onClick={(e) => e.stopPropagation()} >
             <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" className="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center focus:outline-none" type="button">
@@ -130,101 +142,112 @@ export default function SVDashboard() {
             {menuOpen && <ContextMenu closeMenu={() => setMenuOpen(false)} />}
         </div>
         <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col items-center p-4 sm:p-6 gap-8">
-        <div className="w-full max-w-2xl flex flex-col gap-6">
-          {/* Monthly Summary */}
-          <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50 backdrop-blur-md shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Podsumowanie BM</h2>
-              <div className="flex gap-2 items-center">
-                <button onClick={prevMonth} className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm">
-                  ← Prev
-                </button>
-                <span className="text-sm">
-                  {format(currentMonth, "LLLL yyyy")}
-                </span>
-                <button onClick={nextMonth} className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm">
-                  Next →
-                </button>
-              </div>
+          <div className="w-full max-w-2xl flex flex-col gap-6">
+            {/* Monthly Summary */}
+            <div className="border border-gray-700 rounded-xl p-4 bg-gray-800/50 backdrop-blur-md shadow-lg">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold">Podsumowanie BM</h2>
+                  <select
+                    value={rowsPerPage}
+                    onChange={(e) => {
+                      setRowsPerPage(Number(e.target.value));
+                      setCurrentPage(1); // reset to page 1
+                    }}
+                    className="text-sm bg-gray-700 text-white rounded px-2 py-1"
+                  >
+                    {[5, 10, 20, 50].map((n) => (
+                      <option key={n} value={n}>
+                        {n} Rekordow
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex gap-2 items-center">
+                    <button onClick={prevMonth} className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm">
+                      ← Prev
+                    </button>
+                    <span className="text-sm">{format(currentMonth, "LLLL yyyy")}</span>
+                    <button onClick={nextMonth} className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm">
+                      Next →
+                    </button>
+                  </div>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-white">Login</TableHead>
+                      <TableHead className="text-white text-right">Suma godzin</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedSummary.map((it, i) => (
+                      <TableRow key={i} className="hover:bg-gray-900">
+                        <TableCell className="font-semibold">{it.username}</TableCell>
+                        <TableCell className="text-right">{it.hours} h / 80</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
             </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-white">Login</TableHead>
-                  <TableHead className="text-white text-right">Suma godzin</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {summaryArray.map((it, i) => (
-                  <TableRow key={i} className="hover:bg-gray-900">
-                    <TableCell className="font-semibold">{it.username}</TableCell>
-                    <TableCell className="text-right">{it.hours} h / 80</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          {/* Calendar & Add New Event */}
-          <div className="flex flex-col sm:flex-row gap-4 w-full">
-          {/* Calendar */}
-          <Card className="w-fit py-4 bg-gray-900/50 backdrop-blur-md border border-gray-700 text-white">
-              <CardContent className="px-4">
-              <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  month={currentMonth}
-                  onSelect={(d) => d && setSelectedDate(d)}
-                  onMonthChange={(d) => setCurrentMonth(d)}
-                  className="bg-transparent p-0 text-white"
-                  required
-              />
+            {/* Calendar & Add New Event */}
+            <div className="flex flex-col sm:flex-row gap-4 w-full">
+              {/* Calendar */}
+              <Card className="w-fit py-4 bg-gray-900/50 backdrop-blur-md border border-gray-700 text-white">
+                  <CardContent className="px-4">
+                  <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      month={currentMonth}
+                      onSelect={(d) => d && setSelectedDate(d)}
+                      onMonthChange={(d) => setCurrentMonth(d)}
+                      className="bg-transparent p-0 text-white"
+                      required
+                  />
+                  </CardContent>
+                  <CardFooter className="flex flex-col items-start gap-3 border-t border-gray-700 px-4 !pt-4">
+                  <div className="text-sm font-medium">
+                      {format(selectedDate, "d LLLL yyyy")}
+                  </div>
+                  <div className="flex flex-col gap-2 w-full">
+                      {dayEvents.length === 0 ? (
+                      <div className="text-sm text-gray-400">Brak dodanych akcji</div>
+                      ) : (
+                      dayEvents.map((evt, i) => (
+                          <div
+                          key={i}
+                          className="bg-gray-800 relative rounded-md p-2 pl-6 text-sm after:absolute after:inset-y-2 after:left-2 after:w-1 after:rounded-full after:bg-white"
+                          >
+                          <div className="font-medium">{evt.username}</div>
+                          <div className="text-gray-400 text-xs">
+                              {evt.start_sys} - {evt.stop_sys} @ {evt.address}
+                          </div>
+                          </div>
+                      ))
+                      )}
+                  </div>
+                  </CardFooter>
+              </Card>
+              <Link href="/" className="flex-1">
+                <div onClick={downloadExcel} className="h-full bg-green-800/20 backdrop-blur-md border border-dashed border-green-600 shadow-xl rounded-2xl hover:scale-[1.05] transition-transform duration-300 flex items-center justify-center cursor-pointer">
+                  <span className="text-4xl text-gray-400">Pobierz Excela</span>
+                </div>
+              </Link>
+            </div>
+            {/* Form Section */}
+            <Card className="w-full bg-gray-900/50 backdrop-blur-md border border-gray-700 text-white">
+              <CardContent className="p-6 flex flex-col gap-4">
+                <h1 className="text-xl font-bold">Dodaj Alert dla swoich bm - NIE ZOSTALO ZAIMPLEMENTOWANE W SYSTEMIE</h1>
+                <Input
+                  type="text"
+                  placeholder="Tresc alertu"
+                  className="bg-gray-800/40 border-gray-600 placeholder:text-gray-500 text-white"
+                />
+                <Button className="bg-gray-700 hover:bg-gray-600 transition-colors">
+                  Dodaj
+                </Button>
               </CardContent>
-              <CardFooter className="flex flex-col items-start gap-3 border-t border-gray-700 px-4 !pt-4">
-              <div className="text-sm font-medium">
-                  {format(selectedDate, "d LLLL yyyy")}
-              </div>
-              <div className="flex flex-col gap-2 w-full">
-                  {dayEvents.length === 0 ? (
-                  <div className="text-sm text-gray-400">Brak dodanych akcji</div>
-                  ) : (
-                  dayEvents.map((evt, i) => (
-                      <div
-                      key={i}
-                      className="bg-gray-800 relative rounded-md p-2 pl-6 text-sm after:absolute after:inset-y-2 after:left-2 after:w-1 after:rounded-full after:bg-white"
-                      >
-                      <div className="font-medium">{evt.username}</div>
-                      <div className="text-gray-400 text-xs">
-                          {evt.start_sys} - {evt.stop_sys} @ {evt.address}
-                      </div>
-                      </div>
-                  ))
-                  )}
-              </div>
-              </CardFooter>
-          </Card>
-          <Link href="/" className="flex-1">
-            <div onClick={handleClick} className="h-full bg-green-800/20 backdrop-blur-md border border-dashed border-green-600 shadow-xl rounded-2xl hover:scale-[1.05] transition-transform duration-300 flex items-center justify-center cursor-pointer">
-              <span className="text-4xl text-gray-400">Pobierz Excela</span>
-            </div>
-          </Link>
-
+            </Card>
           </div>
-          {/* Form Section */}
-        <Card className="w-full bg-gray-900/50 backdrop-blur-md border border-gray-700 text-white">
-          <CardContent className="p-6 flex flex-col gap-4">
-            <h1 className="text-xl font-bold">Dodaj Alert dla swoich bm - NIE ZOSTALO ZAIMPLEMENTOWANE W SYSTEMIE</h1>
-            <Input
-              type="text"
-              placeholder="Tresc alertu"
-              className="bg-gray-800/40 border-gray-600 placeholder:text-gray-500 text-white"
-            />
-            <Button className="bg-gray-700 hover:bg-gray-600 transition-colors">
-              Dodaj
-            </Button>
-          </CardContent>
-        </Card>
         </div>
-      </div>
-        </>
+      </>
     );
 }
