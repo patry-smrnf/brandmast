@@ -22,18 +22,7 @@ export default function BMDashboardPanel() {
     VELO: "bg-blue-600", 
   };
 
-  const months = [
-    "All",
-    ...Array.from(
-      new Set(
-        cards.map((card) => {
-          // Split date string: "DD.MM.YYYY"
-          const parts = card.date.split(".");
-          return `${parts[1]}.${parts[2]}`; // MM.YYYY
-        })
-      )
-    ),
-  ];
+
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -75,6 +64,18 @@ export default function BMDashboardPanel() {
   //Wyliczanie dynamicznie 
   const tags = ["All", ...Array.from(new Set(cards.map((card) => card.tag)))];
   const statuses = ["All", "Odbyta", "Nadchodzaca"];
+  const months = [
+    "All",
+    ...Array.from(
+      new Set(
+        cards.map((card) => {
+          // Split date string: "DD.MM.YYYY"
+          const parts = card.date.split(".");
+          return `${parts[1]}.${parts[2]}`; // MM.YYYY
+        })
+      )
+    ),
+  ];
 
   // Apply both filters
   const filteredCards = cards.filter((card) => {
@@ -82,7 +83,7 @@ export default function BMDashboardPanel() {
     const statusMatches = filterStatus === "All" || card.status === filterStatus;
     const monthMatches = filterMonth === "ALL" || card.date.split(".").slice(1, 3).join(".") === filterMonth;
 
-    return tagMatches && statusMatches;
+    return tagMatches && statusMatches && monthMatches;
   }
 );
 
