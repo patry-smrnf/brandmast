@@ -21,6 +21,10 @@ import {
   Cell,
 } from 'recharts';
 import ContextMenu from "../BMDashboard/components/ContextMenu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { API_BASE_URL } from '../config';
 
 interface ActionData {
@@ -82,6 +86,14 @@ const BMChartBoard: React.FC = () => {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   
+  const [iloscGlo, setIloscGlo] = useState("");
+  const [iloscVelo, setIloscVelo] = useState("");
+  const [wyplata, setWyplata] = useState<number | null>(null);
+  const [bonus, setBonus] = useState<number | null>(null);
+  const [efGlo, setEfGlo] =  useState<number | null>(null);
+  const [efVelo, setEfVelo] =  useState<number | null>(null);
+  const [trybGodzin, setTrybGodzin] = useState("systemowe");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -132,6 +144,92 @@ const BMChartBoard: React.FC = () => {
   }, [data]);
 
 
+  const handleCalculate = () => {
+    const gloValue = parseFloat(iloscGlo) || 0;
+    const veloValue = parseFloat(iloscVelo) || 0;
+    let ilosc_godzin = 0;
+
+    if(trybGodzin === "systemowe") {
+      ilosc_godzin = dailyHours.reduce((sum, day) => sum + day.systemHours, 0);
+    }
+    if(trybGodzin === "realne") {
+      ilosc_godzin = dailyHours.reduce((sum, day) => sum + day.realHours, 0);
+    }
+    const ilosc_akcji = ilosc_godzin / 4;
+
+    const efektywnosc_glo = gloValue / ilosc_akcji;
+    const efektywnosc_velo = veloValue / ilosc_akcji;
+
+    let bonus = 0;
+    if(efektywnosc_velo > 3 && efektywnosc_velo < 3.9) {
+      bonus = 15 * gloValue;
+    }
+
+    if(efektywnosc_velo > 4 && efektywnosc_velo < 5.3) {
+      if(efektywnosc_glo >= 1.8) {
+        if( gloValue >= 34 ) {
+          bonus = 39 * gloValue;
+        }
+        else {
+          bonus = 35 * gloValue;
+        }
+      }
+      else {
+        if( gloValue >= 34 ) {
+          bonus = 30 * gloValue;
+        }
+        else {
+          bonus = 25 * gloValue;
+        }
+      }
+    }
+    if(efektywnosc_velo > 5.4 && efektywnosc_velo < 7.3) {
+      if(efektywnosc_glo >= 1.8) {
+        if( gloValue >= 34 ) {
+          bonus = 50 * gloValue;
+        }
+        else {
+          bonus = 44 * gloValue;
+        }
+      }
+      else {
+        if( gloValue >= 34 ) {
+          bonus = 38 * gloValue;
+        }
+        else {
+          bonus = 31 * gloValue;
+        }
+      }
+    }
+    if(efektywnosc_velo > 7.4) {
+      if(efektywnosc_glo >= 1.8) {
+        if( gloValue >= 34 ) {
+          bonus = 55 * gloValue;
+        }
+        else {
+          bonus = 49 * gloValue;
+        }
+      }
+      else {
+        if( gloValue >= 34 ) {
+          bonus = 42 * gloValue;
+        }
+        else {
+          bonus = 35 * gloValue;
+        }
+      }
+    }
+
+    
+
+    const calculatedWyplata = ilosc_godzin * 45; // example
+    const calculatedBonus = bonus; // example
+
+    setEfGlo(Number(efektywnosc_glo.toFixed(2)));
+    setEfVelo(Number(efektywnosc_velo.toFixed(2)));
+    setWyplata(calculatedWyplata);
+    setBonus(calculatedBonus);
+  };
   return (
     <>
     {/* Context menu button */}
@@ -147,6 +245,94 @@ const BMChartBoard: React.FC = () => {
         <div className="max-w-7xl mx-auto space-y-12">
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Calculator */}
+                <Card className="bg-gray-800/60 border border-gray-700/60 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-shadow rounded-2xl p-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <CardTitle className="text-xl font-semibold text-white">
+                      Kalkulator wypłat
+                    </CardTitle>
+                  </div>
+                  <CardContent className="space-y-5">
+                    {/* --- Radio Buttons --- */}
+                    <div>
+                      <Label className="text-gray-300 mb-2 block">Które godziny?</Label>
+                    <RadioGroup value={trybGodzin} onValueChange={setTrybGodzin}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="systemowe" id="systemowe" />
+                        <Label htmlFor="systemowe" className="text-gray-300 cursor-pointer">Systemowe</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="realne" id="realne" />
+                        <Label htmlFor="realne" className="text-gray-300 cursor-pointer">Realne</Label>
+                      </div>
+                    </RadioGroup>
+                    </div>
+                    <div>
+                      <Label htmlFor="iloscGlo" className="mb-2 block text-gray-300">
+                        Ilość GLO
+                      </Label>
+                      <Input
+                        id="iloscGlo"
+                        type="number"
+                        placeholder="30"
+                        value={iloscGlo}
+                        onChange={(e) => setIloscGlo(e.target.value)}
+                        className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 focus:border-green-500 focus:ring-green-500"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="iloscVelo" className="mb-2 block text-gray-300">
+                        Ilość VELO
+                      </Label>
+                      <Input
+                        id="iloscVelo"
+                        type="number"
+                        placeholder="120"
+                        value={iloscVelo}
+                        onChange={(e) => setIloscVelo(e.target.value)}
+                        className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 focus:border-green-500 focus:ring-green-500"
+                        required
+                      />
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="default"
+                      onClick={handleCalculate}
+                      className="w-full sm:w-1/2 text-base bg-green-700 hover:bg-green-600"
+                    >
+                      Policz wypłatę
+                    </Button>
+                    {wyplata !== null && bonus !== null && (
+                      <div className="mt-6 space-y-3">
+                        <div className="flex justify-between items-center bg-gray-700/60 p-3 rounded-lg">
+                          <span className="text-gray-300">Efektynosc GLO:</span>
+                          <span className="bg-gray-900 text-gray-300 font-semibold px-3 py-1 rounded-md">
+                            {efGlo}
+                          </span>
+                          <span className="text-gray-300">Efektynosc VELO:</span>
+                          <span className="bg-gray-900 text-gray-300 font-semibold px-3 py-1 rounded-md">
+                            {efVelo}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center bg-gray-700/60 p-3 rounded-lg">
+                          <span className="text-gray-300">Twoja wypłata za godziny:</span>
+                          <span className="bg-green-900 text-green-300 font-semibold px-3 py-1 rounded-md">
+                            {wyplata} zł
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center bg-gray-700/60 p-3 rounded-lg">
+                          <span className="text-gray-300">Twój bonus:</span>
+                          <span className="bg-yellow-900 text-yellow-300 font-semibold px-3 py-1 rounded-md">
+                            {bonus} zł
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
                 {/* Line Chart */}
                 <Card className="bg-gray-800/60 border border-gray-700/60 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-shadow rounded-2xl">
                     <CardHeader className="flex justify-between items-center">

@@ -10,40 +10,55 @@ export default function BMDashboardPanel() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [filterTag, setFilterTag] = useState<string>("All");
   const [filterStatus, setFilterStatus] = useState<string>("All");
+  const [filterMonth, setFilterMonth] = useState<string>("All");
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const [cards, setCards] = useState<CardType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const tagColorMap: Record<string, string> = {
-  ZABKA: "bg-green-600",
-  CARREFOUR: "bg-orange-600",
-  VELO: "bg-blue-600", };
+    ZABKA: "bg-green-600",
+    CARREFOUR: "bg-orange-600",
+    VELO: "bg-blue-600", 
+  };
+
+  const months = [
+    "All",
+    ...Array.from(
+      new Set(
+        cards.map((card) => {
+          // Split date string: "DD.MM.YYYY"
+          const parts = card.date.split(".");
+          return `${parts[1]}.${parts[2]}`; // MM.YYYY
+        })
+      )
+    ),
+  ];
 
   useEffect(() => {
-  const fetchCards = async () => {
-    try {
-      const response = await fetch(`/api/bm/actions`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("Failed to fetch cards");
+    const fetchCards = async () => {
+      try {
+        const response = await fetch(`/api/bm/actions`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!response.ok) throw new Error("Failed to fetch cards");
 
-      const data: CardType[] = await response.json();
+        const data: CardType[] = await response.json();
 
-      const updatedCards = data.map((card) => ({
-        ...card,
-        tagColor: tagColorMap[card.tag] || "bg-gray-500", // fallback color
-      }));
+        const updatedCards = data.map((card) => ({
+          ...card,
+          tagColor: tagColorMap[card.tag] || "bg-gray-500", // fallback color
+        }));
 
-      setCards(updatedCards);
-    } catch (error) {
-      console.error("Error fetching cards:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchCards();
+        setCards(updatedCards);
+      } catch (error) {
+        console.error("Error fetching cards:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCards();
   }, []);
 
   useEffect(() => {
@@ -57,15 +72,17 @@ export default function BMDashboardPanel() {
   }, []);
 
 
-    //Wyliczanie dynamicznie 
-    const tags = ["All", ...Array.from(new Set(cards.map((card) => card.tag)))];
-    const statuses = ["All", "Odbyta", "Nadchodzaca"];
+  //Wyliczanie dynamicznie 
+  const tags = ["All", ...Array.from(new Set(cards.map((card) => card.tag)))];
+  const statuses = ["All", "Odbyta", "Nadchodzaca"];
 
-    // Apply both filters
-    const filteredCards = cards.filter((card) => {
-      const tagMatches = filterTag === "All" || card.tag === filterTag;
-      const statusMatches = filterStatus === "All" || card.status === filterStatus;
-      return tagMatches && statusMatches;
+  // Apply both filters
+  const filteredCards = cards.filter((card) => {
+    const tagMatches = filterTag === "All" || card.tag === filterTag;
+    const statusMatches = filterStatus === "All" || card.status === filterStatus;
+    const monthMatches = filterMonth === "ALL" || card.date.split(".").slice(1, 3).join(".") === filterMonth;
+
+    return tagMatches && statusMatches;
   }
 );
 
@@ -109,6 +126,21 @@ export default function BMDashboardPanel() {
           {statuses.map((status, idx) => (
             <option key={idx} value={status}>
               {status}
+            </option>
+          ))}
+        </select>
+        <label htmlFor="monthFilter" className="block mb-1 font-semibold text-gray-300 text-sm sm:text-base">
+          Filtruj eventy po miesiącu:
+        </label>
+        <select
+          id="monthFilter"
+          className="w-full bg-gray-800 text-white rounded-md p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4"
+          value={filterMonth}
+          onChange={(e) => setFilterMonth(e.target.value)}
+        >
+          {months.map((month, idx) => (
+            <option key={idx} value={month}>
+              {month}
             </option>
           ))}
         </select>

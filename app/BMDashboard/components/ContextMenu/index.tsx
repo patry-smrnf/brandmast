@@ -6,7 +6,8 @@ import {
   PlusCircle,
   LayoutDashboard,
   FlaskConical,
-  BadgeQuestionMark 
+  BadgeQuestionMark,
+  CloudUpload
 } from "lucide-react"; // optional icons
 import clsx from "clsx";
 
@@ -36,6 +37,37 @@ const menuItems = [
     icon: BadgeQuestionMark,
     route: "/BMHelperPage"
   },
+  {
+    label: "Eksportuj do iCloud",
+    icon: CloudUpload,
+    action: async () => {
+      try {
+        const resp = await fetch(`/api/bm/export/actions.ics`, {
+          method: "GET",
+          credentials: "include",
+        });
+      
+        if (!resp.ok) {
+          const text = await resp.text();
+          alert("Export failed: " + (text || resp.statusText));
+          return;
+        }
+        const blob = await resp.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "actions.ics";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } 
+      catch (err) {
+        console.error("Download failed:", err);
+        alert("Download failed: " + (err as any).message);
+      }
+    }
+  }
 ];
 
 export default function ContextMenu({ closeMenu }: ContextMenuProps) {
@@ -56,11 +88,15 @@ export default function ContextMenu({ closeMenu }: ContextMenuProps) {
   return (
     <div className="relative mt-2 w-52 bg-white rounded-xl shadow-2xl ring-1 ring-black/10 overflow-hidden">
       <div className="flex flex-col divide-y divide-gray-200">
-        {menuItems.map(({ label, icon: Icon, route }, idx) => (
+        {menuItems.map(({ label, icon: Icon, route, action }, idx) => (
           <button
             key={idx}
             onClick={() => {
-              router.push(route);
+              if (route) {
+                router.push(route);
+              } else if (action) {
+                action();
+              }
               closeMenu();
             }}
             className={clsx(
