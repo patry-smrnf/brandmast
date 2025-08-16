@@ -4,13 +4,19 @@ import CardItem from "./components/CardItem";
 import ContextMenu from "./components/ContextMenu";
 import { CardType } from "./components/CardItem/CardType";
 import Link from "next/link";
-import { API_BASE_URL } from "../config";
+
+const getCurrentMonth = () => {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const year = now.getFullYear();
+  return `${month}.${year}`;
+};
 
 export default function BMDashboardPanel() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [filterTag, setFilterTag] = useState<string>("All");
   const [filterStatus, setFilterStatus] = useState<string>("All");
-  const [filterMonth, setFilterMonth] = useState<string>("All");
+  const [filterMonth, setFilterMonth] = useState<string>(getCurrentMonth());
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const [cards, setCards] = useState<CardType[]>([]);
@@ -21,8 +27,6 @@ export default function BMDashboardPanel() {
     CARREFOUR: "bg-orange-600",
     VELO: "bg-blue-600", 
   };
-
-
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -69,9 +73,8 @@ export default function BMDashboardPanel() {
     ...Array.from(
       new Set(
         cards.map((card) => {
-          // Split date string: "DD.MM.YYYY"
-          const parts = card.date.split(".");
-          return `${parts[1]}.${parts[2]}`; // MM.YYYY
+          const parts = card.date.split("."); // ["06","08","2025"]
+          return `${parts[1]}.${parts[2]}`;   // "08.2025"
         })
       )
     ),
@@ -81,7 +84,9 @@ export default function BMDashboardPanel() {
   const filteredCards = cards.filter((card) => {
     const tagMatches = filterTag === "All" || card.tag === filterTag;
     const statusMatches = filterStatus === "All" || card.status === filterStatus;
-    const monthMatches = filterMonth === "ALL" || card.date.split(".").slice(1, 3).join(".") === filterMonth;
+
+    const cardMonth = card.date.split(".").slice(1, 3).join("."); // "08.2025"
+    const monthMatches = filterMonth === "All" || cardMonth === filterMonth;
 
     return tagMatches && statusMatches && monthMatches;
   }
