@@ -62,11 +62,11 @@ export default function TimeInputs({
             id="start_time_sys"
             type="time"
             step={60}
-            placeholder="HH:mm"
             value={uiStart}
             onChange={(e) => onStartChange(e.target.value)}
-            className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 focus:border-green-500 focus:ring-green-500 transition"
-            aria-label="System start time"
+            className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 
+                      focus:border-green-500 focus:ring-green-500 transition
+                      text-center [appearance:none]"
           />
         </div>
 
@@ -81,7 +81,9 @@ export default function TimeInputs({
             placeholder="HH:mm"
             value={uiStop}
             onChange={(e) => onStopChange(e.target.value)}
-            className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 focus:border-green-500 focus:ring-green-500 transition"
+            className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 
+                      focus:border-green-500 focus:ring-green-500 transition
+                      text-center [appearance:none]"
             aria-label="System stop time"
           />
         </div>
@@ -95,14 +97,14 @@ export default function TimeInputs({
               Start (Real)
             </Label>
             <Input
-              id="start_time_sys"
+              id="start_time_real"
               type="time"
               step={60}
-              value={uiStart}
-              onChange={(e) => onStartChange(e.target.value)}
-              className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 
-                        focus:border-green-500 focus:ring-green-500 transition
-                        text-center [appearance:textfield]"
+              placeholder="HH:mm"
+              value={uiStartReal}
+              onChange={(e) => onStartRealChange?.(e.target.value)}
+              aria-label="Real start time"
+              className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 focus:border-green-500 focus:ring-green-500 transition text-center [appearance:none]"
             />
           </div>
 
@@ -117,7 +119,7 @@ export default function TimeInputs({
               placeholder="HH:mm"
               value={uiStopReal}
               onChange={(e) => onStopRealChange?.(e.target.value)}
-              className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 focus:border-green-500 focus:ring-green-500 transition text-center [appearance:textfield]"
+              className="bg-gray-700 text-white border-gray-600 placeholder-gray-400 focus:border-green-500 focus:ring-green-500 transition text-center [appearance:none]"
               aria-label="Real stop time"
             />
           </div>
