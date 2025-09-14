@@ -2,7 +2,7 @@ import { API_BASE_URL } from "@/app/config";
 
 export async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
     try {
-        const res = await fetch(`https://whispering-cynthia-brandmast-9a13ee72.koyeb.app${url}`, {
+        const res = await fetch(`${url}`, {
             credentials: "include",
             ...options,
         });
