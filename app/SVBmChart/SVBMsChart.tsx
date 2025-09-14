@@ -23,10 +23,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import ContextMenu from "../SVDashBoard/ContextMenu";
+import ContextMenu from "../SVComponents/ContextMenu";
 import { BMResData } from "../SVDashBoard/types/BMResponse";
 import { toast } from "sonner";
-import { API_BASE_URL } from "../config";
+import { apiFetch } from "@/lib/api";
+import { defaultMessage } from "@/types/DefaultMessage";
 
 export default function SVBmChartPage() {
   const [plhLogin, setPLHLogin] = useState("");
@@ -42,18 +43,10 @@ export default function SVBmChartPage() {
   useEffect(() => {
     const fetchBMdata = async () => {
         try {
-            const response = await fetch(`/api/sv/myBMs`, {
+            const response = await apiFetch<BMResData[]>(`/api/sv/myBms`, {
                 method: "GET",
-                credentials: "include"
             });
-
-            if(!response.ok) {
-                const errorData = await response.json();
-                toast.error(errorData.message || "Unknown error occurred");
-                throw new Error("Failed to fetch data");
-            }
-
-            const data: BMResData[] = await response.json();
+            const data: BMResData[] = await response;
             setBmData(data);
         }
         catch(error) {
@@ -64,26 +57,18 @@ export default function SVBmChartPage() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    const payload = {
-      id_bm: id,
-    };
     try{
-      const response = await fetch(`/api/sv/deleteBM`, {
-        credentials: "include",
+      const response = await apiFetch<defaultMessage>(`/api/sv/delBm`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          bm_id: id
+        }),
       });
 
-      const result = await response.json();
-      if(!response.ok) {
-        toast.error(result.message);
-        throw new Error(result.message);
-      }
-
-      toast.success(result.message || "BM created successfully!");
+      toast.success(response.message || "BM created successfully!");
     }
     catch(error) {
       toast.error("error" + error);
@@ -94,36 +79,24 @@ export default function SVBmChartPage() {
   const handleCreate = async (e: React.FormEvent) =>  {
     e.preventDefault();
 
-    
     if (!plhLogin) {
       toast.error("Please fill all fields.");
       return;
     }
 
-    const payload = {
-      login: plhLogin,
-      imie: bmImie,
-      nazwisko: bmNazwisko
-    };
-
     try {
-      const response = await fetch(`/api/sv/createBM`, {
-        credentials: "include",
+      const response = await apiFetch<defaultMessage>(`/api/sv/addBm`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          login: plhLogin,
+          imie: bmImie,
+          nazwisko: bmNazwisko
+        }),
       });
-
-      const result = await response.json();
-      if(!response.ok) {
-        toast.error(result.message);
-        throw new Error(result.message);
-      }
-
-      toast.success(result.message || "BM created successfully!");
-      
+      toast.success(response.message || "BM created successfully!");
     }
     catch(error) {
       toast.error("error" + error);
@@ -207,21 +180,21 @@ export default function SVBmChartPage() {
                 </TableHeader>
                 <TableBody>
                   {paginatedUsers.map((user) => (
-                    <TableRow key={user.id_bm} className="hover:bg-gray-800/40 transition-colors duration-200">
+                    <TableRow key={user.bm_id} className="hover:bg-gray-800/40 transition-colors duration-200">
                       <TableCell className="text-white font-medium whitespace-nowrap">
-                        {user.login}
+                        {user.bm_login}
                       </TableCell>
                       <TableCell className="text-gray-300 whitespace-nowrap">
-                          {user.imie}
+                          {user.bm_imie}
                       </TableCell>
                       <TableCell className="text-gray-300 whitespace-nowrap">
-                          {user.nazwisko}
+                          {user.bm_nazwisko}
                       </TableCell>
                       <TableCell className="text-gray-300 whitespace-nowrap">
                         {user.area_name}
                       </TableCell>
                       <TableCell>
-                        <Button onClick={() => handleDelete(user.id_bm)} variant="destructive" className="py-1 px-4 text-xs font-medium text-white focus:outline-none bg-red-900 rounded-full border border-red-600 hover:bg-red-800 focus:z-10 focus:ring-4 focus:ring-gray-400 ">
+                        <Button onClick={() => handleDelete(user.bm_id)} variant="destructive" className="py-1 px-4 text-xs font-medium text-white focus:outline-none bg-red-900 rounded-full border border-red-600 hover:bg-red-800 focus:z-10 focus:ring-4 focus:ring-gray-400 ">
                           Usun
                         </Button>
                       </TableCell>

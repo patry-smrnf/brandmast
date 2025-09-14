@@ -1,40 +1,124 @@
+// MapPicker.tsx
 "use client";
 
-import React from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Icon, LatLngExpression } from "leaflet";
-
-// Leaflet icon fix (if needed)
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+} from "react-leaflet";
+import L, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const markerIcon = new Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
 type Shop = {
-  name: string
+  name: string;
   id_shop: number;
   address: string;
   lat: string;
   lon: string;
 };
 
+function FlyToSelected({
+  selectedShop,
+  selectZoom,
+  defaultCenter,
+  defaultZoom,
+}: {
+  selectedShop: Shop | null;
+  selectZoom: number;
+  defaultCenter: LatLngExpression;
+  defaultZoom: number;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!selectedShop) {
+      // no selection -> optionally reset view to default
+      // uncomment if you want to reset to default when selection is cleared
+      // map.setView(defaultCenter, defaultZoom);
+      return;
+    }
+
+    const lat = parseFloat(selectedShop.lat || "0");
+    const lon = parseFloat(selectedShop.lon || "0");
+    if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
+      // use flyTo for smooth animation; fallback to setView if something goes wrong
+      try {
+        map.flyTo([lat, lon], selectZoom, { duration: 0.8 });
+      } catch {
+        map.setView([lat, lon], selectZoom);
+      }
+    }
+  }, [map, selectedShop, selectZoom, defaultCenter, defaultZoom]);
+
+  return null;
+}
+
 export default function MapPicker({
   shops,
+  selectedAddress,
   onSelect,
 }: {
-  shops: Shop[],
+  shops: Shop[];
+  selectedAddress?: string;
   onSelect: (address: string) => void;
 }) {
   const center: LatLngExpression = [52.2305, 21.0069];
+  const DEFAULT_ZOOM = 13;
+  const SELECT_ZOOM = 15;
+
+  const blueIcon = useMemo(
+    () =>
+      new L.Icon({
+        iconUrl:
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+        shadowUrl:
+          "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      }),
+    []
+  );
+
+  const redIcon = useMemo(
+    () =>
+      new L.Icon({
+        iconUrl:
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+        shadowUrl:
+          "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      }),
+    []
+  );
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  // sync parent-selectedAddress -> selectedId
+  useEffect(() => {
+    if (!selectedAddress) {
+      setSelectedId(null);
+      return;
+    }
+    const matched = shops.find((s) => s.address === selectedAddress);
+    setSelectedId(matched ? matched.id_shop : null);
+  }, [selectedAddress, shops]);
+
+  // compute currently selected Shop (used by FlyToSelected)
+  const selectedShop = selectedId != null ? shops.find((s) => s.id_shop === selectedId) ?? null : null;
 
   return (
     <div className="h-64 w-full rounded-lg overflow-hidden border border-gray-600 mt-3">
       <MapContainer
         center={center}
-        zoom={13}
+        zoom={DEFAULT_ZOOM}
         style={{ height: "100%", width: "100%" }}
         className="bg-gray-900"
       >
@@ -43,18 +127,42 @@ export default function MapPicker({
           attribution='&copy; OpenStreetMap contributors'
         />
 
-        {shops.map((shop) => (
-          <Marker
-            key={shop.id_shop}
-            position={[parseFloat(shop.lat), parseFloat(shop.lon)]}
-            icon={markerIcon}
-            eventHandlers={{
-              click: () => onSelect(shop.address),
-            }}
-          >
-            <Popup>{shop.name} - {shop.address}</Popup>
-          </Marker>
-        ))}
+        {/* This component uses `useMap()` to call flyTo when selectedShop changes */}
+        <FlyToSelected
+          selectedShop={selectedShop}
+          selectZoom={SELECT_ZOOM}
+          defaultCenter={center}
+          defaultZoom={DEFAULT_ZOOM}
+        />
+
+        {shops.map((shop) => {
+          const lat = parseFloat(shop.lat || "0");
+          const lon = parseFloat(shop.lon || "0");
+          if (Number.isNaN(lat) || Number.isNaN(lon)) return null;
+
+          const isSelected = shop.id_shop === selectedId;
+          // include selection state in key to force Marker remount (updates icon)
+          const markerKey = `${shop.id_shop}-${isSelected ? "sel" : "un"}`;
+
+          return (
+            <Marker
+              key={markerKey}
+              position={[lat, lon]}
+              icon={isSelected ? redIcon : blueIcon}
+              eventHandlers={{
+                click: () => {
+                  setSelectedId(shop.id_shop);
+                  onSelect(shop.address);
+                  // Fly handled by FlyToSelected (useMap) because selectedId changed
+                },
+              }}
+            >
+              <Popup>
+                {shop.name} - {shop.address}
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );

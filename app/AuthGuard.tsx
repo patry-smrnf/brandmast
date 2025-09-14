@@ -2,9 +2,10 @@
 
 import React, { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
-import { Loader2 } from "lucide-react"; // optional icon for animation
-import { API_BASE_URL } from "./config"
+import { Loader2 } from "lucide-react"; 
+
+import { AuthMeType } from "@/types/AuthMe"
+import { apiFetch } from "@/lib/api";
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -18,16 +19,13 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
   useEffect(() => {
     async function verifyAuth() {
       try {
-        const res = await fetch("/api/auth/me", {
+        const res = await apiFetch<AuthMeType>(`/api/auth/me`, {
           method: "GET",
-          credentials: "include", // same as axios's withCredentials: true
         });
 
-        if (!res.ok) throw new Error("Unauthorized");
+        const data = await res;
 
-        const data = await res.json();
-
-        const userRole = data.role?.toUpperCase();
+        const userRole = data.role.toUpperCase();
         if (!allowedRoles.includes(userRole)) {
           router.replace("/Not-Authorized");
           return;

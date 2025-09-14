@@ -2,15 +2,14 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import {
   LogOut,
-  BarChart2,
-  PlusCircle,
   LayoutDashboard,
-  FlaskConical,
+  FileSpreadsheet,
   Users,
   Store
-} from "lucide-react"; // optional icons
+} from "lucide-react";
 import clsx from "clsx";
 import { API_BASE_URL } from "@/app/config";
+import { apiFetch } from "@/lib/api";
 
 type ContextMenuProps = {
   closeMenu: () => void;
@@ -32,6 +31,11 @@ const menuItems = [
     icon: Store,
     route: "/SVShopboard",
   },
+  {
+    label: "Pobierz EXCEL",
+    icon: FileSpreadsheet,
+    route: "/SVExcelGenerator",
+  },
 ];
 
 export default function ContextMenu({ closeMenu }: ContextMenuProps) {
@@ -39,9 +43,8 @@ export default function ContextMenu({ closeMenu }: ContextMenuProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch(`/api/auth/logout`, {
+      await apiFetch(`/api/auth/logout`, {
         method: "POST",
-        credentials: "include",
       });
     } catch (err) {
       console.error("Logout failed:", err);

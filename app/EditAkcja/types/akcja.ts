@@ -1,13 +1,17 @@
 
 export interface akcja_data {
-    id_akcja: number,
-    status: string,
-    date: string,
-    type: string,
-    address: string,
-    start_sys: string,
-    stop_sys: string,
-    start_real: string,
-    stop_real: string,
-    szkolenie: boolean
+  shop_id:number,
+  shop_name:string,
+  shop_address:string,
+  action_date:string,
+  action_system_start:string,
+  action_system_end:string,
+  action_real_start?:string,
+  action_real_end?:string,
+  szkolenie:boolean,
+  cta:{
+    label:string,
+    href:string
+  },
+  past:boolean
 }

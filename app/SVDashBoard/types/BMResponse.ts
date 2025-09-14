@@ -1,24 +1,20 @@
 export interface BMResData {
-    id_bm: number,
-    login: string,
-    imie: string,
-    nazwisko: string,
-    sv_id: number,
-    team_id: number,
-    type: string,
+    bm_id: number,
+    bm_login: string,
+    bm_imie: string,
+    bm_nazwisko: string,
+    supervisor_id: number,
     area_name: string,
-    akcje: Akjca[]
+    team_type: string,
+    actions: Akjca[]
 };
 
 export interface Akjca {
-    id_akcja: number,
-    status: string,
-    date: string,
-    type: string,
-    address: string,
-    szkolenie: boolean,
-    start_sys: string,
-    stop_sys: string,
-    start_real: string,
-    stop_real: string
+    action_id: number,
+    action_date: string,
+    action_system_start: string,
+    action_system_end: string,
+    shop_id: number,
+    shop_name: string,
+    shop_address: string
 };

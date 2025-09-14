@@ -7,46 +7,43 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { API_BASE_URL } from "../config"
+import { apiFetch } from "@/lib/api";
 
 export default function LoginPage() {
+
+  //Do przenoszenia User
   const router = useRouter();
 
+  //Do zarzadzania statusem user
   const [login, setLogin] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-const handleSubmit = useCallback(
-  async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  //Zalap logowanie
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setError(null);
+      try {
+        const res = await apiFetch("/api/auth/login", { 
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // required for JSON body
+          },
+          body: JSON.stringify({
+            login: login,
+          }),
+        })
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // same as axios's withCredentials: true
-        body: JSON.stringify({ login }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        setError(errorData.message || "Błąd logowania");
-        return;
+        router.push("/");
+      } catch (err) {
+        setError("Blad: " + err);
+      } finally {
+        setLoading(false);
       }
-
-      router.push("/");
-    } catch (err) {
-      setError("Nieznany błąd");
-    } finally {
-      setLoading(false);
-    }
-  },
-  [login, router]
-);
+    },
+    [login, router]
+  );
 
 
   return (
@@ -83,7 +80,7 @@ const handleSubmit = useCallback(
 
           <p className="mt-6 text-center text-sm text-gray-400">
             Problem z logowaniem?{" "}
-            <a className="text-blue-400 hover:underline" href="https://wa.me/123456789">
+            <a className="text-blue-400 hover:underline">
               Pisz do mnie na WhatsApp
             </a>
           </p>

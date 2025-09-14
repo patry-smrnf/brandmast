@@ -23,7 +23,7 @@ export default function TimeInputs({
   onStopChange: (val: string) => void;
   onStartRealChange: (val: string) => void;
   onStopRealChange: (val: string) => void;
-  status_akcji?: string;
+  status_akcji?: boolean;
 }) {
   return (
     <div className="space-y-6">
@@ -59,7 +59,7 @@ export default function TimeInputs({
         </div>
       </div>
       
-{status_akcji === "Odbyta" && (
+{status_akcji && (
   <div className="flex flex-col md:flex-row gap-6">
     <div className="flex-1">
       <Label htmlFor="start_time_real" className="mb-1 text-gray-300 text-sm font-medium">

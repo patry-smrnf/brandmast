@@ -8,6 +8,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "./config";
 import AdminPage from "./AdminBoard/page";
+import { apiFetch } from "@/lib/api";
+import { AuthMeType } from "@/types/AuthMe";
 
 type UserRole = "BM" | "SV" | "ADMIN" | null;
 
@@ -19,18 +21,11 @@ export default function ModernDarkPage() {
   useEffect(() => {
     async function verifyAuth() {
       try {
-        const res = await fetch("/api/auth/me", {
+        const res = await apiFetch<AuthMeType>(`/api/auth/me`, {
           method: "GET",
-          credentials: "include", // Ensures cookies are sent
         });
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch user");
-        }
-
-        const data = await res.json();
-
-        const userRole = data.role?.toUpperCase();
+        const userRole = res.role.toUpperCase();
         if(userRole == "BM") {
           setRole("BM");
         }

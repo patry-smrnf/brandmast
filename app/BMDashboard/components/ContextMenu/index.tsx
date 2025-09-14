@@ -42,7 +42,7 @@ const menuItems = [
     icon: CloudUpload,
     action: async () => {
       try {
-        const resp = await fetch(`/api/bm/export/actions.ics`, {
+        const resp = await fetch(`${API_BASE_URL}/api/bm/export/actions.ics`, {
           method: "GET",
           credentials: "include",
         });
@@ -75,7 +75,7 @@ export default function ContextMenu({ closeMenu }: ContextMenuProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch(`/api/auth/logout`, {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
