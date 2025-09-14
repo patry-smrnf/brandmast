@@ -31,7 +31,6 @@ const ExcelGeneratorBoard: React.FC = () => {
   const [startDate, setStartDate] = useState<string>(formatDateForInput(today));
   const [endDate, setEndDate] = useState<string>(formatDateForInput(oneMonthLater));
   const [isGenerating, setIsGenerating] = useState(false);
-  const [fileReady, setFileReady] = useState(false);
 
   const [status, setStatus] = useState<"idle" | "generating" | "ready" | "error">("idle");
 
