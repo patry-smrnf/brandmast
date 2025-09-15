@@ -11,6 +11,8 @@ const TAG_COLOR_MAP: Record<string, string> = {
   ZABKA: "bg-green-600",
   CARREFOUR: "bg-orange-600",
   VELO: "bg-blue-600",
+  BEN: "bg-red-800",
+  INMEDIO: "bg-yellow-700",
   "CIRLE K":"bg-red-700"
 };
 

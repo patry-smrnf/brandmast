@@ -2,7 +2,7 @@ import { API_BASE_URL } from "@/app/config";
 
 export async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
     try {
-        const res = await fetch(`${url}`, {
+        const res = await fetch(`${API_BASE_URL}${url}`, {
             credentials: "include",
             ...options,
         });
