@@ -328,6 +328,9 @@ export default function SVDashboard() {
                             {evt.action_system_start} - {evt.action_system_end} @ {evt.shop_name}
                             {evt.shop_address ? ` — ${evt.shop_address}` : ""}
                           </div>
+                          <div className="text-gray-400 text-xs">
+                            Wpisano o: {evt.czas_wpisania}
+                          </div>
                         </div>
                       ))
                     )}

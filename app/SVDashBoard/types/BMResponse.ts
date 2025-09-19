@@ -16,5 +16,6 @@ export interface Akjca {
     action_system_end: string,
     shop_id: number,
     shop_name: string,
-    shop_address: string
+    shop_address: string,
+    czas_wpisania: string
 };
